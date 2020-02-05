@@ -14,7 +14,7 @@
 
 --Accesses left door
 left_door = script.Parent.Parent.LeftDoor
---How much the sliding door moves when ir's opening or closing
+--How much the sliding door moves when it's opening or closing
 moving_length = 6
 --Position coordinates of the left door
 x = left_door.Position.X
