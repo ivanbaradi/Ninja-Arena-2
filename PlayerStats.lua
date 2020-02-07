@@ -1,5 +1,14 @@
---[[WARNING: Do not test this script the game in Roblox Studios
-	or it will overwrite another player's data!!]]
+--[[
+	WARNING: Do NOT test this script the game in Roblox Studios
+	or it will overwrite another player's data. It will also not
+	work if you're executing this script in RobloxStudios. You
+	will need to publish the game and play from the website.
+
+	This script utilizes data writing, data reading, and data
+	recovery. This prevents player's data from being lost. 
+	
+
+]]--
 
 --Gets DataStore2 module
 local DataStore2 = require(1936396537)
@@ -77,7 +86,7 @@ game.Players.PlayerAdded:Connect(function(player)
 	updateKills(default_kills)
 	updateXP(default_xp)
 
-	--Callback functions that get called to update player's data
+	--Callback functions that get called whenever the player's data changed
 	level_DataStore:OnUpdate(updateLevel)
 	kills_DataStore:OnUpdate(updateKills)
 	XP_DataStore:OnUpdate(updateXP)
