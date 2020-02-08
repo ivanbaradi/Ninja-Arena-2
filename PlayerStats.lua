@@ -5,9 +5,14 @@
 	will need to publish the game and play from the website.
 
 	This script utilizes data writing, data reading, and data
-	recovery. This prevents player's data from being lost. 
+	recovery. This API is called DataStore2. It 100% guarantees
+	data loss prevention. DataStore is ineffective in recovering
+	data since all player's stats can get reset to its default
+	values.
 	
-
+	Credits go to the creator of this API, Kampfkarren. You can
+	look up DataStore2 library:
+	https://devforum.roblox.com/t/how-to-use-datastore2-data-store-caching-and-data-loss-prevention/136317
 ]]--
 
 --Gets DataStore2 module
@@ -19,14 +24,14 @@ local default_kills = 0
 local default_xp = 0
 
 --Combines three keys (level, kills, and xp)
-DataStore2.Combine("DATA", "test110", "test111", "test112")
+DataStore2.Combine("DATA", "levelData", "killsData", "XP_Data")
 
 game.Players.PlayerAdded:Connect(function(player)
 	
 	--Player's key for level, kills, and xp
-	local level_DataStore = DataStore2("test110", player)
-	local kills_DataStore = DataStore2("test111", player)
-	local XP_DataStore = DataStore2("test112", player)
+	local level_DataStore = DataStore2("levelData", player)
+	local kills_DataStore = DataStore2("killsData", player)
+	local XP_DataStore = DataStore2("XP_Data", player)
 	
 	--Sets backups for each storage in case data loss occurs
 	level_DataStore:SetBackup(10)
@@ -104,6 +109,4 @@ game.Players.PlayerAdded:Connect(function(player)
 			humanoid.Health = humanoid.MaxHealth
 		end
 	end)
-
 end)
-
