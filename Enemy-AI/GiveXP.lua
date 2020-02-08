@@ -1,9 +1,17 @@
 --[[
-		This script is responsible for giving
-		XP to player after they killed the enemy.
+	This script is responsible for giving
+	XP to player after they killed the enemy.
+	Its responsibilities are to update player's
+	kills, level, and XP. When the player reaches
+	at a certain target XP, they will level up.
 		
-		INSTRUCTION: Place this script inside the
-		enemy model with a humanoid named 'Zombie'.
+	REQUIREMENT: You need a script that works
+	with DataStore2 performing data writing 
+	and reading. Otherwise, player's stats
+	will not be saved.
+		
+	INSTRUCTION: Place this script inside the
+	enemy model with a humanoid named 'Zombie'.
 --]]
 
 local DataStore2 = require(1936396537)
