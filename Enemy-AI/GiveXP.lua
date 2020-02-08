@@ -8,7 +8,8 @@
 	REQUIREMENT: You need a script that works
 	with DataStore2 performing data writing 
 	and reading. Otherwise, player's stats
-	will not be saved.
+	will not be saved. Specifically, you need
+	PlayerStats.lua file.
 		
 	INSTRUCTION: Place this script inside the
 	enemy model with a humanoid named 'Zombie'.
