@@ -1,6 +1,9 @@
 --[[
 	This script gives XP to player right 
 	after they killed the enemy.
+
+	INSTRUCTIONS:
+	1. Place this script inside the enemy model.
 ]]
 
 local DataStore2 = require(1936396537)
