@@ -13,6 +13,8 @@
 	Credits go to the creator of this API, Kampfkarren. You can
 	look up DataStore2 library:
 	https://devforum.roblox.com/t/how-to-use-datastore2-data-store-caching-and-data-loss-prevention/136317
+
+	INSTRUCTION: Place this script in "ServerScriptService"
 ]]--
 
 --Gets DataStore2 module
