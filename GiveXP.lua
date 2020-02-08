@@ -1,3 +1,8 @@
+--[[
+	This script gives XP to player right 
+	after they killed the enemy.
+]]
+
 local DataStore2 = require(1936396537)
 DataStore2.Combine("DATA", "levelData", "killsData", "XP_Data")
 
