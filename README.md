@@ -9,5 +9,13 @@ Ninja Games 2 is a Roblox game, where players will be fighting against enemy AIs
 Tools: Lua, RobloxStudios
 
 Implementations So Far:
-- Designed models, infrastructure in lobby, and game modes
+- Designed models and a lobby
 - Enabled an API that saves and loads user’s data without occurrences of data loss
+- Created a leaderboard that displays the player's level, kills, and XP points
+
+Future Implementations:
+- Game modes
+- Models
+- Battle maps
+- NPC models
+- Weapon Shop GUI, Volume GUI, and other GUIs
