@@ -2,7 +2,7 @@
 
 This project is currently under development.
 
-Link to the preview of the game: https://www.roblox.com/games/2982863015/Ninja-Games-2-Preview
+Link to the Game: https://www.roblox.com/games/2985893079/Ninja-Games-2
 
 ## About
 
@@ -11,16 +11,10 @@ Ninja Games 2 is a Roblox game, where players will be fighting against enemy AIs
 ## Development
 
 **Implementations So Far**
-- Designed models and a lobby
-- Enabled an API that saves and loads user’s data without occurrences of data loss
-- Created a leaderboard that displays the player's level, cash, and XP points
-
-**Future Implementations**
-- Game modes
-- Models
-- Battle maps
-- NPC models
-- Weapon Shop GUI, Volume GUI, and other GUIs
+- Designed models and infrastructure in lobby
+- Enabled saving and loading player's data
+- Created a leaderboard that displays the player's level, cash, and XP
+- Designed a Player GUI that displays player's health bar, username, level, and cash
 
 ## Game Modes
 **Normal Mode:** Players will be fighting for NH101 or against it. They have an option to switch sides: NH101 team, opposing team, or spectating team. In the spectator's side, players were granted speed boost to go through different battles in an arena. All AIs respawn everytime they die and there is no time limit in the arena. You are free to leave the game if you are tired. Every two weeks, I change AIs.
