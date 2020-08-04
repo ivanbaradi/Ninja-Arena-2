@@ -6,12 +6,12 @@ local default_level = 1
 local default_cash = 0
 local default_xp = 0
 
---Combines three keys (level, kills, and xp)
+--Combines three keys (level, cash, and xp)
 DataStore2.Combine("DATA", "level", "cash", "XP")
 
 game.Players.PlayerAdded:Connect(function(player)
 	
-	--Player's key for level, kills, and xp
+	--Player's key for level, cash, and xp
 	local level_DataStore = DataStore2("level", player)
 	local cash_DataStore = DataStore2("cash", player)
 	local XP_DataStore = DataStore2("XP", player)
@@ -26,7 +26,7 @@ game.Players.PlayerAdded:Connect(function(player)
 		level_DataStore:ClearBackup()
 	end
 	
-	--Clears kills backup if it's set
+	--Clears cash backup if it's set
 	if cash_DataStore:IsBackup() then
 		cash_DataStore:ClearBackup()
 	end
@@ -58,7 +58,7 @@ game.Players.PlayerAdded:Connect(function(player)
 		LEVEL.Value = level_DataStore:Get(updateLevelData)
 	end
 	
-	--Calls everytime kill counts gets updated
+	--Calls everytime cash counts gets updated
 	local function updateCash(updateCashData)
 		CASH.Value = cash_DataStore:Get(updateCashData)
 	end
