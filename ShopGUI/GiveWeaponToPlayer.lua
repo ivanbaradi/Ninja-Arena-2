@@ -43,13 +43,13 @@ give_weapon.OnServerEvent:Connect(function(player, new_weapon, subtract_cash)
 		
 		--Adds all player weapons besides the Wooden Sword in the backpack 
 		for i, weapon in pairs(player.Backpack:GetChildren()) do
-			print(weapon.Name)
+			
 			if weapon.Name == "Wooden Sword" then
 				continue
-			else
-				table.insert(player_backpack, i-1, weapon.Name)
-				print(weapon.Name.." is inserted in the table")
 			end
+				
+			table.insert(player_backpack, i-1, weapon.Name)	
+			print(weapon.Name.." is inserted in the table")
 		end
 		
 		--Saves all weapons (including the new one)
