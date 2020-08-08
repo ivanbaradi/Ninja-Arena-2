@@ -18,6 +18,6 @@ script.Parent.ClickDetector.MouseClick:Connect(function(player)
 	--Runs a local script to make the teleport message visible to the player
 	sendPlayerToPlace:FireClient(player, "Normal Mode")
 	wait(2)
-	--Teleports player to another place
+	--Teleports player to another place (Below is Normal Mode's placeID)
 	game:GetService('TeleportService'):Teleport(5503417753, player)
 end)
