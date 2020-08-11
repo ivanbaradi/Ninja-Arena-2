@@ -87,7 +87,7 @@ game.Players.PlayerAdded:Connect(function(player)
 		player_backpack = backpack_DataStore:Get(updateBackpackData)
 		
 		--Loads player's weapons in the inventory (executes ONCE)
-		if joining then
+		if joining.Value then
 			print("Weapons to load:")
 			for i, weapon in pairs(player_backpack) do
 				local loading_weapon = game.ReplicatedStorage:FindFirstChild(weapon)
@@ -99,7 +99,7 @@ game.Players.PlayerAdded:Connect(function(player)
 					print(weapon.." no longer exists in ReplicateStorage")
 				end
 			end
-			joining = false
+			joining.Value = false
 		end
 	end
 	
