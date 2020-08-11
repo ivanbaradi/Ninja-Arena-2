@@ -89,10 +89,15 @@ game.Players.PlayerAdded:Connect(function(player)
 		--Loads player's weapons in the inventory (executes ONCE)
 		if joining then
 			print("Weapons to load:")
-			for i, load_weapon in pairs(player_backpack) do
-				print("Loading "..load_weapon)
-				game.ReplicatedStorage:FindFirstChild(load_weapon):Clone().Parent = player.Backpack
-				game.ReplicatedStorage:FindFirstChild(load_weapon):Clone().Parent = player.StarterGear
+			for i, weapon in pairs(player_backpack) do
+				local loading_weapon = game.ReplicatedStorage:FindFirstChild(weapon)
+				if loading_weapon then
+					loading_weapon:Clone().Parent = player.Backpack
+					loading_weapon:Clone().Parent = player.StarterGear
+					print(loading_weapon)
+				else
+					print(weapon.." no longer exists in ReplicateStorage")
+				end
 			end
 			joining = false
 		end
