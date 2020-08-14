@@ -1,3 +1,15 @@
+--[[
+
+This script does the following:
+1. Designs TextButton components for each bought weapon
+2. Displays these buttons on Sell UI
+3. Matches a player's weapon to the weapon from Weapons dictionary
+4. Deletes a TextButton component, because the player had sold a weapon
+5. Restocks player's inventory after the player sells the weapon
+
+]]--
+
+--Delays to get all weapons because the s
 wait(1)
 
 --WeaponFrame
@@ -86,27 +98,25 @@ end
 --Displays all player's weapons in the Sell Gui
 function displayWeapons()
 	--Goes through all the playerweapons
-	for i, weapon in pairs(player.Backpack:GetChildren()) do
+	for i, weapon in pairs(player.StarterGear:GetChildren()) do
 		if weapon then
-			if weapon.Name ~= "Wooden Sword" then
-				local w = getWeapon(weapon.Name)
-				if w then
-					print("Weapon founded!")
-					print("Name: "..w.name..", Selling Price: "..w.selling_price)
-					
-					--Creates a button for the weapon
-					createWeaponButton(w.name, w.selling_price, XScale[col], YScale[row], i)
-					print("Successfully built a button!")
-					print()
-					
-					--Next column
-					col = col + 1
-					
-					--Next Row
-					if col == 9 then
-						row = row + 1
-						col = 1
-					end
+			local w = getWeapon(weapon.Name)
+			if w then
+				print("Weapon founded!")
+				print("Name: "..w.name..", Selling Price: "..w.selling_price)
+
+				--Creates a button for the weapon
+				createWeaponButton(w.name, w.selling_price, XScale[col], YScale[row], i)
+				print("Successfully built a button!")
+				print()
+
+				--Next column
+				col = col + 1
+
+				--Next Row
+				if col == 9 then
+					row = row + 1
+					col = 1
 				end
 			end
 		end
