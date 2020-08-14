@@ -9,7 +9,7 @@ This script does the following:
 
 ]]--
 
---Delays to get all weapons because the s
+--Delays because the StarterGear needs time to get all weapons
 wait(1)
 
 --WeaponFrame
