@@ -126,7 +126,7 @@ end
 --Removes all player's weapons from the Sell Gui
 function removeWeapons()
 	for i, weapon_button in pairs(weapon_frame:GetChildren()) do
-		if weapon_frame then
+		if weapon_button then
 			if weapon_button:IsA("TextButton") then
 				weapon_button.Parent = nil
 			end
