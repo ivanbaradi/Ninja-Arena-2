@@ -1,3 +1,5 @@
+--[[ This script replicates a weapon to the player's inventory after buying it. ]]--
+
 --DataStore 2
 local DataStore2 = require(1936396537)
 DataStore2.Combine("DATA", "level", "cash", "XP")
