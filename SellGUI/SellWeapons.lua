@@ -136,7 +136,7 @@ end
 
 --Redisplays weapons after buying or selling a weapon
 restockWeapons.OnClientEvent:Connect(function()
-	if table.getn(player.Backpack:GetChildren()) == 1 then
+	if table.getn(player.StarterGear:GetChildren()) == 0 then
 		
 		removeWeapons()
 		
@@ -160,7 +160,7 @@ restockWeapons.OnClientEvent:Connect(function()
 end)
 
 --Initiates whenever the player spawns
-if table.getn(player.Backpack:GetChildren()) == 1 then
+if table.getn(player.StarterGear:GetChildren()) == 0 then
 	script.Parent.Parent.Message.Text = "You don't have any weapons to sell."
 else
 	script.Parent.Parent.Message.Visible = false
