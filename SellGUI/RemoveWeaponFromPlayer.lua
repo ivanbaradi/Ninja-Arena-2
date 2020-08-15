@@ -11,26 +11,12 @@ local restockWeapons = game.ReplicatedStorage:FindFirstChild("RestockWeapons")
 sellWeapon.OnServerEvent:Connect(function(player, weapon_name, selling_price)
 		
 	--Gets player's backpack DataStore
-	--local backpackDataStore = DataStore2("backpack2",player)
-	--Gets player's backpack DataStore
 	local cashDataStore = DataStore2("cash",player)
-	
-	--Prints old player's backpack (Debugging purposes) 
-	--[[print("Old Backpack:")
-	for i, weapon in pairs(player.Backpack:GetChildren()) do
-		if weapon then
-			if weapon.Name ~= "Wooden Sword" then
-				print(i..". "..weapon.Name)
-			end
-		end
-	end
-	print()]]
 	
 	--Removes weapon from the player's backpack
 	local remove_weaponBP = player.Backpack:FindFirstChild(weapon_name)
 	--Removes weapon from the player's character
 	local remove_weaponCH = player.Character:FindFirstChild(weapon_name)
-
 	--Removes weapon from starter gear
 	local remove_weaponSG = player.StarterGear:FindFirstChild(weapon_name)
 	
@@ -41,7 +27,7 @@ sellWeapon.OnServerEvent:Connect(function(player, weapon_name, selling_price)
 		remove_weaponCH.Parent = nil
 	end
 	
-	--Removes selling weapon
+	--Removes selling weapon from the starter gear so it doesn't get stored in the inventory when players spawn or respawn
 	if remove_weaponSG then
 		remove_weaponSG.Parent = nil
 	end
@@ -49,34 +35,8 @@ sellWeapon.OnServerEvent:Connect(function(player, weapon_name, selling_price)
 	--Gives player cash back
 	player.leaderstats.Cash.Value = player.leaderstats.Cash.Value + selling_price
 	
-	--Prints new player's backpack (Debugging purposes) 
-	--[[print("New Backpack:")
-	for i, weapon in pairs(player.Backpack:GetChildren()) do
-		if weapon then
-			if weapon.Name ~= "Wooden Sword" then
-				print(i..". "..weapon.Name)
-			end
-		end
-	end]]
-	
-	--Saves the weapon item in the backpack (Code this part)
-	--[[local player_backpack = {}
-	
-	print("Weapons to be saved:")
-	--Adds all player weapons besides the Wooden Sword in the starter gear 
-	for i, weapon in pairs(player.Backpack:GetChildren()) do
-		if weapon then
-			if weapon.Name ~= "Wooden Sword" then
-				table.insert(player_backpack, i-1, weapon.Name)
-				print(weapon.Name)
-			end
-		end
-	end]]
-	
 	--Saves player's cash
 	cashDataStore:Set(player.leaderstats.Cash.Value)
-	--Saves player's backpack
-	--backpackDataStore:Set(player_backpack)
 	
 	restockWeapons:FireClient(player)
 end)
