@@ -21,7 +21,6 @@ give_weapon.OnServerEvent:Connect(function(player, new_weapon, subtract_cash)
 		--Gets current cash value for player
 		local cash_DataStore = DataStore2("cash", player)
 		
-		
 		--Takes cash from player for a weapon
 		player.leaderstats.Cash.Value = player.leaderstats.Cash.Value - subtract_cash
 		
