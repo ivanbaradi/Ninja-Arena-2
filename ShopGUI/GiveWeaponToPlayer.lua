@@ -21,8 +21,6 @@ give_weapon.OnServerEvent:Connect(function(player, new_weapon, subtract_cash)
 		--Gets current cash value for player
 		local cash_DataStore = DataStore2("cash", player)
 		
-		--Gets player's old backpack
-		--local backpack_DataStore = DataStore2("backpack2", player)
 		
 		--Takes cash from player for a weapon
 		player.leaderstats.Cash.Value = player.leaderstats.Cash.Value - subtract_cash
@@ -32,31 +30,6 @@ give_weapon.OnServerEvent:Connect(function(player, new_weapon, subtract_cash)
 		weaponSG = game.ReplicatedStorage:FindFirstChild(new_weapon):Clone()
 		weaponBP.Parent = player.Backpack 
 		weaponSG.Parent = player.StarterGear
-		
-		--Saves the weapon item in the backpack (Code this part)
-		--local player_backpack = {}
-		
-		--Adds all player weapons besides the Wooden Sword in the starter gear 
-		--[[for i, weapon in pairs(player.Backpack:GetChildren()) do
-			if weapon then
-				print(weapon.Name)
-				if weapon.Name ~= "Wooden Sword" then
-					table.insert(player_backpack, i-1, weapon.Name)
-					print(weapon.Name.." is inserted in the table")
-				end
-			end
-		end
-				
-		--Prints all weapons
-		print("Player weapons to be saved:")
-		for j, print_weapon in pairs(player_backpack) do
-			if print_weapon then
-				print("Weapon "..j..": "..print_weapon)
-			end
-		end]]
-		
-		--Saves all weapons (including the new one)
-		--backpack_DataStore:Set(player_backpack)
 		
 		--Saves cash value (Note: This often works if you don't test it in Roblox Studios)
 		cash_DataStore:Set(player.leaderstats.Cash.Value)
