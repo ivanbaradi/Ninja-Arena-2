@@ -49,6 +49,25 @@ local Weapons = {
 	{name = "Shark Sword", selling_price = 25000}
 }
 
+--Seperate thousands with commas
+function formatNumber(selling_price)
+	
+	local formatted = ""
+	local rev_index_ptr = 1
+	
+	for i = string.len(selling_price), 1, -1 do
+	
+		if rev_index_ptr % 3 == 1 and rev_index_ptr > 3 then
+			formatted = string.sub(selling_price,i,i)..","..formatted
+		else
+			formatted = string.sub(selling_price,i,i)..formatted
+		end
+	
+		rev_index_ptr = rev_index_ptr + 1
+	end
+	return formatted
+end
+
 --Function that creates a button for each bought weapon
 function createWeaponButton(weapon_name, selling_price, x_scale, y_scale, button_number)
 	
@@ -67,7 +86,7 @@ function createWeaponButton(weapon_name, selling_price, x_scale, y_scale, button
 	weapon_button.Name = "Button"..button_number --change soon
 	--Sets text for the button
 	weapon_button.Font = "Highway"
-	weapon_button.Text = weapon_name.." ["..selling_price.."]"
+	weapon_button.Text = weapon_name.." ["..formatNumber(tostring(selling_price)).."]"
 	weapon_button.TextColor3 = Color3.fromRGB(0, 0, 0)
 	weapon_button.TextScaled = true
 	weapon_button.TextTransparency = 0
