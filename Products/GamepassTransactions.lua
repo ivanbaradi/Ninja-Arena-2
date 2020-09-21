@@ -1,3 +1,6 @@
+--[[ This script is responsible for dealing with player's transactions. If the player purchased weapon, then it will be cloned in
+the player's backpack and startergear]]
+
 --MarketPlace
 local MarketPlace = game:GetService("MarketplaceService")
 --Gamepass Weapons
@@ -30,6 +33,7 @@ MarketPlace.PromptGamePassPurchaseFinished:Connect(function(player, gamepassId, 
 		elseif gamepassId == 11420620 or gamepassId == 11420646--[[VIP or MEGA VIP]]
 			AddVIPTag_Remote:FireClient(player)
 		end
+		
 		print("User purchased gamepass!")
 	end
 end)
