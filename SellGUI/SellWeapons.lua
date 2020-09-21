@@ -9,8 +9,8 @@ This script does the following:
 
 ]]--
 
---Delays because the StarterGear needs time to get all weapons
-wait(1)
+--Treated as if the GUI is loading
+wait(2)
 
 --WeaponFrame
 local weapon_frame = script.Parent.Parent:WaitForChild("Frame")
@@ -18,17 +18,21 @@ local weapon_frame = script.Parent.Parent:WaitForChild("Frame")
 local player = game.Players.LocalPlayer
 --XScales and YScales of the weapon button
 local XScale = {0.01, 0.135, 0.26, 0.385, 0.51, 0.635, 0.76, 0.885}
-local YScale = {0.014, 0.22, 0.426, 0.632, 0.838}
+local YScale = {0.01, 0.18, 0.36, 0.54, 0.72}-- -0.005
 --Row and columnindex
 local row, col = 1, 1
 --SellWeapon Event
 local SellWeapon = game.ReplicatedStorage:FindFirstChild("SellWeapon")
 --Used to restock weapons after a player sells the weapon
 local restockWeapons = game.ReplicatedStorage:FindFirstChild("RestockWeapons")
+--Message
+local message = script.Parent.Parent:FindFirstChild("Message")
+--Marketplace
+local MarketPlace = game:GetService("MarketplaceService")
 
 --All weapons from the shop (Still need to add more)
 local Weapons = {
-	{name = "Iron Sword", selling_price = 100},
+	{name = "Iron Sword", selling_price = 50},
 	{name = "Katana", selling_price = 150},
 	{name = "Red Katana", selling_price = 225},
 	{name = "Blue Katana", selling_price = 265},
@@ -46,7 +50,28 @@ local Weapons = {
 	{name = "Scourge of the Overseer", selling_price = 12500},
 	{name = "Bear Knight", selling_price = 15120},
 	{name = "The Golden Wrath", selling_price = 19000},
-	{name = "Shark Sword", selling_price = 25000}
+	{name = "Shark Sword", selling_price = 25000},
+	{name = "Blizzard Striker", selling_price = 30300},
+	{name = "Crimson Sword", selling_price = 36500},
+	{name = "Excalibur", selling_price = 48000},
+	{name = "Possessed Sword", selling_price = 62500},
+	{name = "Wind Behemoth", selling_price = 105000},
+	{name = "Purple Katana", selling_price = 140000},
+	{name = "Demon Dagger", selling_price = 187500},
+	{name = "Lava Blade", selling_price = 215000},
+	{name = "Retro Blue", selling_price = 255000},
+	{name = "Overseer Axe", selling_price = 292000},
+	{name = "Obsidian Sword", selling_price = 335000},
+	{name = "Corrupted Blade", selling_price = 400000},
+	{name = "Azure Dragon Long Sword", selling_price = 500000},
+	{name = "Yui Sao's Sword", selling_price = 1250000},
+	{name = "Azure Dragon Elite Sword", selling_price = 3000000},
+	{name = "Starlight Sword", selling_price = 4650000},
+	{name = "Galactic Chainsaw", selling_price = 6500000},
+	{name = "Deity Blade", selling_price = 10000000},
+	{name = "Nightmare Sword", selling_price = 17500000},
+	{name = "Dark Demon Long Sword", selling_price = 25000000},
+	{name = "Ninja God Sword", selling_price = 50000000}
 }
 
 --Seperate thousands with commas
@@ -65,6 +90,7 @@ function formatNumber(selling_price)
 	
 		rev_index_ptr = rev_index_ptr + 1
 	end
+
 	return formatted
 end
 
@@ -93,7 +119,7 @@ function createWeaponButton(weapon_name, selling_price, x_scale, y_scale, button
 	--Sets position of the frame
 	weapon_button.Position = UDim2.new(x_scale,0,y_scale,0)
 	--Sets size of the frame
-	weapon_button.Size = UDim2.new(0.105,0,0.173,0)
+	weapon_button.Size = UDim2.new(0.105,0,0.12,0)
 	--
 	weapon_button.MouseButton1Click:Connect(function()
 		print("Selling "..weapon_name.." to get "..selling_price.." Cash")
@@ -114,28 +140,30 @@ function getWeapon(weapon)
 	return nil
 end
 
---Displays all player's weapons in the Sell Gui
+--Displays all player's weapons in the Sell Gui (Except for Wooden Sword and Gamepass Weapons)
 function displayWeapons()
 	--Goes through all the playerweapons
 	for i, weapon in pairs(player.StarterGear:GetChildren()) do
 		if weapon then
-			local w = getWeapon(weapon.Name)
-			if w then
-				print("Weapon founded!")
-				print("Name: "..w.name..", Selling Price: "..w.selling_price)
-
-				--Creates a button for the weapon
-				createWeaponButton(w.name, w.selling_price, XScale[col], YScale[row], i)
-				print("Successfully built a button!")
-				print()
-
-				--Next column
-				col = col + 1
-
-				--Next Row
-				if col == 9 then
-					row = row + 1
-					col = 1
+			if weapon.Name ~= "Bluesteel Katana" and weapon.Name ~= "Immortal God Long Sword" then
+				local w = getWeapon(weapon.Name)
+				if w then
+					--print("Weapon founded!")
+					--print("Name: "..w.name..", Selling Price: "..w.selling_price)
+					
+					--Creates a button for the weapon
+					createWeaponButton(w.name, w.selling_price, XScale[col], YScale[row], i)
+					--print("Successfully built a button!")
+					--print()
+					
+					--Next column
+					col = col + 1
+					
+					--Next Row
+					if col == 9 then
+						row = row + 1
+						col = 1
+					end
 				end
 			end
 		end
@@ -155,33 +183,36 @@ end
 
 --Redisplays weapons after buying or selling a weapon
 restockWeapons.OnClientEvent:Connect(function()
-	if table.getn(player.StarterGear:GetChildren()) == 0 then
-		
-		removeWeapons()
-		
+	removeWeapons()
+	if table.getn(player.StarterGear:GetChildren()) == 0 or (table.getn(player.StarterGear:GetChildren()) == 1 and (MarketPlace:UserOwnsGamePassAsync(player.UserId, 11322835) or MarketPlace:UserOwnsGamePassAsync(player.UserId, 11353143))) or (table.getn(player.StarterGear:GetChildren()) == 2 and MarketPlace:UserOwnsGamePassAsync(player.UserId, 11322835) and MarketPlace:UserOwnsGamePassAsync(player.UserId, 11353143)) then
 		--Need to tell players that they don't have any bought weapons
-		if script.Parent.Parent.Message.Text ~= "You don't have any weapons to sell." then
-			script.Parent.Parent.Message.Text = "You don't have any weapons to sell."
+		if message.Text ~= "You don't have any weapons to sell." then
+			message.Text = "You don't have any weapons to sell."
+			print(message.Text)
 		end
 		
-		script.Parent.Parent.Message.Visible = true
-	else
-		
+		message.Visible = true
+	else	
 		--Removes message because player had weapons
-		if script.Parent.Parent.Message.Visible == true then
-			script.Parent.Parent.Message.Visible = false
+		if message.Visible == true then
+			message.Visible = false
 		end
 		
-		removeWeapons()
+		--Will need to display weapons again
 		row, col = 1, 1
 		displayWeapons()
 	end
 end)
 
---Initiates whenever the player spawns
-if table.getn(player.StarterGear:GetChildren()) == 0 then
-	script.Parent.Parent.Message.Text = "You don't have any weapons to sell."
+--[[
+The "You don't have any weapons to sell" message will display if either:
+1. The player had no gamepass and no items in the StarterGear
+2. The player owns one gamepass (Bluesteel Katana OR Immortal God Long Sword) and has 1 item in the StarterGear
+3. The player owns two gamepasses (BOTH Bluesteel Katana AND Immortal God Long Sword and has 2 items in the StarterGear
+]]
+if table.getn(player.StarterGear:GetChildren()) == 0 or (table.getn(player.StarterGear:GetChildren()) == 1 and (MarketPlace:UserOwnsGamePassAsync(player.UserId, 11322835) or MarketPlace:UserOwnsGamePassAsync(player.UserId, 11353143))) or (table.getn(player.StarterGear:GetChildren()) == 2 and MarketPlace:UserOwnsGamePassAsync(player.UserId, 11322835) and MarketPlace:UserOwnsGamePassAsync(player.UserId, 11353143)) then
+	message.Text = "You don't have any weapons to sell."
 else
-	script.Parent.Parent.Message.Visible = false
+	message.Visible = false
 	displayWeapons()
 end
