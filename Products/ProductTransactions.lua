@@ -23,7 +23,7 @@ MarketPlace.ProcessReceipt = function(receipt)
 		player.leaderstats.Cash.Value = player.leaderstats.Cash.Value + 25000
 	elseif receipt.ProductId == 1079199836 then
 		player.leaderstats.Cash.Value = player.leaderstats.Cash.Value + 70000
-	elseif receipt.ProductId == 1079202753 then
+	else
 		player.leaderstats.Cash.Value = player.leaderstats.Cash.Value + 300000
 	end
 	
