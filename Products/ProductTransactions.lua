@@ -1,3 +1,5 @@
+--[[ This script adds player's cash and saves it after the player purchases it ]]
+
 --DataStore 2
 local DataStore2 = require(1936396537)
 DataStore2.Combine("DATA", "level", "cash", "XP")
@@ -12,7 +14,7 @@ MarketPlace.ProcessReceipt = function(receipt)
 	--Cash DataStore
 	local cashDataStore = DataStore2("cash", player)
 	
-	--Goes through transaction
+	--Goes through transaction and gives players cash
 	if receipt.ProductId == 1079116891 then
 		player.leaderstats.Cash.Value = player.leaderstats.Cash.Value + 500
 	elseif receipt.ProductId == 1079151406 then
