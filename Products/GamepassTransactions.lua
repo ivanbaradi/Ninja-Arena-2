@@ -30,7 +30,7 @@ MarketPlace.PromptGamePassPurchaseFinished:Connect(function(player, gamepassId, 
 		elseif gamepassId == 11353143 --[[Immortal God Long Sword]] then
 			ImmortalGodLongSword:Clone().Parent = player.Backpack
 			ImmortalGodLongSword:Clone().Parent = player.StarterGear
-		elseif gamepassId == 11420620 or gamepassId == 11420646--[[VIP or MEGA VIP]]
+		elseif gamepassId == 11420620 or gamepassId == 11420646 --[[VIP or MEGA VIP]] then
 			AddVIPTag_Remote:FireClient(player)
 		end
 		
