@@ -2,8 +2,6 @@
 
 This project is currently under development.
 
-Link to the Game: https://www.roblox.com/games/2985893079/Ninja-Games-2
-
 ## About
 
 Ninja Games 2 is a Roblox game, where players will be fighting against enemy AIs to earn new weapons, rank up, and meet new friends online. All players will be spawned inside a lobby when they join the game. Further features will be introduced when this project is progressing enough.
