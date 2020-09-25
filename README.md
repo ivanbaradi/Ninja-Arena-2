@@ -8,16 +8,10 @@ Link to the Game: https://www.roblox.com/games/2985893079/Ninja-Games-2
 
 Ninja Games 2 is a Roblox game, where players will be fighting against enemy AIs to earn new weapons, rank up, and meet new friends online. All players will be spawned inside a lobby when they join the game. Further features will be introduced when this project is progressing enough.
 
-## Game Modes
-**Normal Mode:** Players will be fighting for NH101 or an enemy team. The team needs to score 2,000 points to win. Players will have a 2 minute break of every round of the battle in the Break Room. There, they can eat food, relax, and purchase gamepasses
+## Gameplay
+The gameplay server starts off with a 3-minute break in the Break Room for intervention. Players can talk with other players, relax, and eat foods in the food section. The server selects the map and Ninja Heroes 101's team opponent. After the break, all players will be teleported to the map and the server spawns NPC fighters. The match begins right after the countdown is over. To win the game, either of the teams must to accumulate 2,500 points. After the match is over, all players will return to the Break Room for another 3-minute intervention. The cycle repeats until the server gets shut down or there are no players left.
 
-**Pro Mode:** Players must be at least **Level 20** to play this mode. AIs gain more health and deal more damage, and players get more cash than usual.
-
-**Legendary Mode:** Players must be at least **Level 40** to play this mode. AIs gain way more health and deal way more damage, and players get way more cash than usual.
-
-**Ninja God Mode:** Players must be at least **Level 70** to play this mode.  AIs gain lots of health and deal way lots of damage, and players get way lots of cash than usual.
-
-**Impossible Mode:** Players must be at least level **Level 90** to play this mode. You will not survive.
+There are a total of four game modes: **Beginner Mode**, **Pro Mode (Level 20+)**, **Legendary Mode (Level 40+)**, and **Ninja God Mode (Level 70+)**. Players will earn more cash as they go through harder game modes. 
 
 ## Level, XP, Cash and Health System
 
