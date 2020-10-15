@@ -1,10 +1,10 @@
 # Ninja Arena 2
 
-This project is currently under development.
-
 ## About
-
 Ninja Arena 2 is a Roblox game, where players will be fighting against enemy AIs to earn new weapons, rank up, and meet new friends online. All players will be spawned inside a lobby when they join the game. Further features will be introduced when this project is progressing enough.
+
+## Release of the Game
+The game will be released once I am done implementing **Beginner Mode** and **Practice Mode**. All other modes will be coming soon. For now, players can level up to Level 20.
 
 ## Gameplay
 The gameplay server starts off with a 3-minute break in the Break Room for intervention. Players can talk with other players, relax, and eat foods in the food section. The server selects the map and Ninja Heroes 101's team opponent. After the break, all players will be teleported to the map and the server spawns NPC fighters. The match begins right after the countdown is over. To win the game, either of the teams must to accumulate 2,500 points. After the match is over, all players will return to the Break Room for another 3-minute intervention. The cycle repeats until the server gets shut down or there are no players left.
