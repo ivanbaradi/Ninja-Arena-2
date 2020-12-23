@@ -1,13 +1,9 @@
---Script that generates player's appropriate health points
+--[[Script that generates player's appropriate health points]]
 
 --MarketPlace
 local MarketPlace = game:GetService("MarketplaceService")
---RestorePlayerHealth Remote Event
-local RestorePlayerHealth = game.ReplicatedStorage:FindFirstChild("RestorePlayerHealth")
---InfiniteHealth Remote Event
-local InfiniteHealth = game.ReplicatedStorage:FindFirstChild("InfiniteHealth")
 
---Function that assigns a player's health
+--Function that assigns a player's health (regeneration)
 function assignPlayerHP(player, humanoid, leaderstats)
 	
 	--Assigns HP base 
@@ -121,6 +117,7 @@ function assignPlayerHP(player, humanoid, leaderstats)
 	--Finalize Player Max Health
 	humanoid.MaxHealth = sub_health
 	humanoid.Health = humanoid.MaxHealth
+	print(player.Name.."'s health regenerated!")
 end
 
 --Fires when the player joins the game or respawns
@@ -129,7 +126,7 @@ game.Players.PlayerAdded:Connect(function(player)
 		wait(1)
 		local leaderstats = player.leaderstats
 		if leaderstats then
-			local humanoid = char:WaitForChild("Humanoid")
+			local humanoid = char:FindFirstChild("Humanoid") or char:FindFirstChild("Zombie")
 			if humanoid then
 				assignPlayerHP(player, humanoid, leaderstats)
 			end
@@ -137,12 +134,15 @@ game.Players.PlayerAdded:Connect(function(player)
 	end)
 end)
 
---Restores Player's Health if the player unquips the Immortal God Long Sword
-RestorePlayerHealth.OnServerEvent:Connect(function(player, humanoid)
-	assignPlayerHP(player, humanoid, player.leaderstats)
-end)
+--Restores Player's Health After leveling up
+game.ServerStorage:FindFirstChild("Health Regeneration").Event:Connect(assignPlayerHP)
 
-InfiniteHealth.OnServerEvent:Connect(function(player, humanoid)
+--Restores Player's Health if the player unquips the Immortal God Long Sword
+game.ReplicatedStorage:FindFirstChild("RestorePlayerHealth").OnServerEvent:Connect(assignPlayerHP)
+
+--Grants player infinite health when equipping the Immortal God Long Sword
+game.ReplicatedStorage:FindFirstChild("InfiniteHealth").OnServerEvent:Connect(function(player, humanoid)
 	humanoid.MaxHealth = math.huge
 	humanoid.Health = humanoid.MaxHealth
 end)
+
