@@ -35,17 +35,11 @@ game.ReplicatedStorage:FindFirstChild("AddRoundXPToPlayer").OnServerEvent:Connec
 		--Player's Humanoid
 		local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
 		
-		print("Player's Old Target XP: "..player:WaitForChild("Target XP").Value.." XP.")
-		print("Player's Old Max Health: "..humanoid.MaxHealth.."HP.")
-		
 		--Levels up player and saves it
 		leaderstats.Level.Value += 1
 		level_DataStore:Set(leaderstats.Level.Value)
 		
 		--Restores player's health
 		game.ServerStorage:FindFirstChild("Health Regeneration"):Fire(player, humanoid, leaderstats)
-		
-		print("Player's New Target XP: "..player:WaitForChild("Target XP").Value.." XP.")
-		print("Player's New Max Health: "..humanoid.MaxHealth.."HP.")
 	end
 end)
