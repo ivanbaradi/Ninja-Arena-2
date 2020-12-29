@@ -63,6 +63,8 @@ local enemyPoints = game.ReplicatedStorage.TeamPoints:FindFirstChild("EnemyPoint
 local RoundContinuing = script:FindFirstChild("RoundContinuing")
 --PlayerCanReset Object
 local PlayerCanReset = game.ReplicatedStorage:FindFirstChild("PlayerCanReset")
+--Can Spawn On Map Object
+local CanSpawnOnMap = game.ReplicatedStorage:FindFirstChild("Can Spawn On Map")
 --Score to Win
 local VictoryScore = 2000
 
@@ -602,20 +604,7 @@ function assignPlayerTeams()
 	--[[ Used to balance out teams (Prevents one side from having too many teammates)
 	1: Ninja Heroes 101, 2: Enemy Team ]]
 	local team_balancer = math.random(1,2)
-		
-	--Add Zombie Scripts Bindable Function
-	local AddZombieScripts = game.ServerStorage:FindFirstChild("Add Zombie Scripts")
-	--Change Player Overhead GUI Bindable Function
-	local ChangeOverheadGUI = game.ServerStorage:FindFirstChild("Change Player Overhead GUI")
-	
-	--[[WORK ON THIS LATER
-	Choice on how players are assigned to teams
-	0: All players are in different teams
-	1: All players are in the same team (NH101 or Enemy Team)
-	2: All players are in NH101 Team
-	3: All players are in the Enemy Team]]
-	--local team_choice = 0
-	
+			
 	--Assigns player a team
 	local team_selector
 	
@@ -625,12 +614,11 @@ function assignPlayerTeams()
 	--Assigns player teams
 	for i, player in pairs(Player:GetPlayers()) do
 		
-		--Team Balancer (OPTION 0)
 		repeat
 			team_selector = math.random(1,2)
 		until team_selector ~= team_balancer
 		
-	--	team_selector = 1
+--		team_selector = 1
 		
 		--Assigns player to be at NH101 Team or Enemy Team
 		if team_selector == 1 then
@@ -640,14 +628,14 @@ function assignPlayerTeams()
 			local humanoid = player.Character:FindFirstChild("Humanoid")
 			humanoid.Name = "Zombie"
 			--Communicates with SpawnTeamPlayer script to add zombie scripts to player
-			AddZombieScripts:Fire(player.Character)
+			game.ServerStorage:FindFirstChild("Add Zombie Scripts"):Fire(player.Character)
 		end
 		
 		--Changes the Player GUI background color based on his team
 		ChangePlayerGUIBackgroundColor:FireClient(player)
 		
 		--Communicates with SpawnTeamPlayer script to change the outline team color of player's name
-		ChangeOverheadGUI:Fire(player)
+		game.ServerStorage:FindFirstChild("Change Player Overhead GUI"):Fire(player)
 		
 		--Switches team to balance out number of players (OPTION 0)
 		if team_balancer == 1 then
@@ -854,6 +842,9 @@ function Gameplay()
 	PlayerCanMove.Value = false
 	TeleportAllPlayersToTheMap()
 	
+	--Players are allowed to spawn on the map
+	CanSpawnOnMap.Value = true
+	
 	--Disables reset button to all players
 	PlayerCanReset.Value = false
 	
@@ -953,6 +944,9 @@ function Gameplay()
 	wait(1)
 	TeleportAllPlayersToBreakRoom()
 	
+	--Players are not allowed to spawn on the map
+	CanSpawnOnMap.Value = false
+	
 	--Will need to revert all player's GUI color back to gray 
 	PlayerGuiBackgroundColorKey.Value = 0
 	ChangePlayerGUIBackgroundColor:FireAllClients()
@@ -968,7 +962,7 @@ function Gameplay()
 end
 
 
---Server runs here! (Comment out the loop to prevent the game from running) [testing purposes only]
+--[[Server runs here! (Comment out the loop to prevent the game from running) [testing purposes only]
 while true do
 	Gameplay()
-end
+end]]
