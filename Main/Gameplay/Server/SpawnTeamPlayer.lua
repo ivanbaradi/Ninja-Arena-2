@@ -157,13 +157,12 @@ game.Players.PlayerAdded:Connect(function(player)
 		
 		if player.Team then	
 			
-			--Player's Humanoid (Humanoid or Zombie)
-			local humanoid
+			--Player's Humanoid (Humanoid, Zombie, or Spectator)
+			local humanoid = char:FindFirstChildOfClass("Humanoid")
 			
 			--[[Will need to change replace Humanoid scripts with Zombie or Spectator ones, 
 			if a player is from the Enemy Team or Spectator Team]]
 			if player.Team.Name == EnemyTeamName.Value then
-				humanoid = char:FindFirstChild("Humanoid")
 				humanoid.Name = "Zombie"
 				AddZombieScripts(char)
 			elseif player.Team.Name == "Spectators" then
@@ -171,7 +170,7 @@ game.Players.PlayerAdded:Connect(function(player)
 				game.ServerStorage:FindFirstChild("Enter Spectate Mode"):Fire(player)
 			end
 			
-			--If the player respawns, is not a Spectator, and walking is disabled, then the character's walkspeed is 0.
+			--Spectators can move during AI spawning and countdown
 			if not PlayerCanMove.Value then
 				if humanoid.Name ~= "Spectator" then humanoid.WalkSpeed = 0 end
 			end
