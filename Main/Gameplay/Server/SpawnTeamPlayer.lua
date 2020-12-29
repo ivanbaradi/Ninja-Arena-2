@@ -24,6 +24,8 @@ local SpawnPlayerToMap = game.ServerStorage:FindFirstChild("Spawn Player To Map"
 local ZombieScriptsHandler = game.ServerStorage:FindFirstChild("Add Zombie Scripts")
 --Change Player Overhead GUI Bindable Function
 local ChangeOverheadGUI = game.ServerStorage:FindFirstChild("Change Player Overhead GUI")
+--Can Spawn On Map Object
+local CanSpawnOnMap = game.ReplicatedStorage:FindFirstChild("Can Spawn On Map")
 
 --Will need  replace animation scripts and change it to Zombie versions of them
 function AddZombieScripts(char)
@@ -92,11 +94,18 @@ function changePlayerOverheadGUIOutlineColor(player)
 	local PlayerName = PlayerOverheadGUI.GUI:WaitForChild("Player Name")
 	local VIPTag = PlayerOverheadGUI.GUI:WaitForChild("VIP Tag")
 	
-	--Blue and red colors
-	local blueColor = Color3.fromRGB(0, 0, 128)
-	local redColor = Color3.fromRGB(255, 0, 0)
+	--Blue, red, and brown colors 
+	local blueColor = Color3.fromRGB(0, 0, 128) --NH101 Team Color
+	local redColor = Color3.fromRGB(255, 0, 0) --Enemy Team Color
+	local brownColor = Color3.fromRGB(128, 43, 0) --Spectator Team Color
 	
-	if player.Team.Name == "Ninja Heroes 101" then
+	--Get player's team
+	local PlayerTeam = player:WaitForChild("Team")
+
+	if PlayerTeam.Name == "Spectators" then
+		PlayerName.TextStrokeColor3 = brownColor
+		VIPTag.TextStrokeColor3 = brownColor
+	elseif PlayerTeam.Name == "Ninja Heroes 101" then
 		PlayerName.TextStrokeColor3 = blueColor
 		VIPTag.TextStrokeColor3 = blueColor
 	else
@@ -107,7 +116,7 @@ end
 
 --Called from Gameplay Script
 ChangeOverheadGUI.Event:Connect(changePlayerOverheadGUIOutlineColor)
-
+	
 --[[
 THIS FUNCTION DOES THE FOLLOWING:
 - Changes the player's humanoid's name to Zombie, if he/she is on the enemy's team
@@ -147,31 +156,31 @@ game.Players.PlayerAdded:Connect(function(player)
 		--The player must belong in the team	
 		
 		if player.Team then	
+			
 			--Player's Humanoid (Humanoid or Zombie)
 			local humanoid
 			
-			--[[ Will need to change replace Humanoid scripts with Zombie ones, 
-			if a player is from the Enemy Team]]
+			--[[Will need to change replace Humanoid scripts with Zombie or Spectator ones, 
+			if a player is from the Enemy Team or Spectator Team]]
 			if player.Team.Name == EnemyTeamName.Value then
 				humanoid = char:FindFirstChild("Humanoid")
 				humanoid.Name = "Zombie"
 				AddZombieScripts(char)
+			elseif player.Team.Name == "Spectators" then
+				--Player reenters Spectate Mode because he respawned
+				game.ServerStorage:FindFirstChild("Enter Spectate Mode"):Fire(player)
 			end
 			
-			--[[If the player joined the game or reset their characters during
-			the initial AI spawning, then they still are not allowed to move 
-			until the match begins]]
+			--If the player respawns, is not a Spectator, and walking is disabled, then the character's walkspeed is 0.
 			if not PlayerCanMove.Value then
-				--If the player humanoid's name is not Humanoid, then it's a Zombie
-				humanoid = char:FindFirstChild("Humanoid") or char:FindFirstChild("Zombie")
-				humanoid.WalkSpeed = 0
+				if humanoid.Name ~= "Spectator" then humanoid.WalkSpeed = 0 end
 			end
 			
 			--Changes the Player Overhead outline color to appropriate team color
 			changePlayerOverheadGUIOutlineColor(player)
 			
 			--Spawns player in the map randomly
-			spawnTeamPlayer(char)
+			if CanSpawnOnMap.Value then spawnTeamPlayer(char) end
 		end
 	end)
 end)
