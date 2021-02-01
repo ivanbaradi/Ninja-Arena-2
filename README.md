@@ -3,6 +3,16 @@
 ## About
 Ninja Arena 2 is a Roblox game, where players will be fighting against enemy AIs to earn new weapons, rank up, and meet new friends online. All players will be spawned inside a lobby when they join the game. Further features will be introduced when this project is progressing enough.
 
+## Purpose
+- Utilize object-oriented programming skills.
+- Develop APIs to create services for players.
+- Learn remote and server events, object duplication, and other Lua concepts.
+- Have Fun!
+
+## Technologies
+- **Programming Languages**: Lua
+- **Others**: Roblox Studios, Mac OS
+
 ## Release of the Game
 The game will be released once I am done implementing **Beginner Mode** and **Practice Mode**. All other modes will be coming soon. For now, players can level up to Level 20.
 
