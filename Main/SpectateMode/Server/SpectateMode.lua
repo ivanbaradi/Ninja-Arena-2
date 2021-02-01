@@ -72,8 +72,6 @@ end
 6. Calls in the client to change the Player GUI background color to brown]]
 function EnterSpectateMode(player)
 	
-	
-	
 	--Spectators Team
 	local SpectatorTeam
 
@@ -101,8 +99,11 @@ function EnterSpectateMode(player)
 	--Needs to replace old animation scripts to make them compatible with Spectator Humanoid
 	ReplaceWithSpectatorScripts(player.Character)
 
-	--Communicates another to change the Player GUI's background color to brown
+	--Communicates local script to change the Player GUI's background color to brown
 	game.ReplicatedStorage:FindFirstChild("ChangePlayerGUIBackgroundColor_BROWN"):FireClient(player)
+	
+	--Communicates with SpawnTeamPlayer script to change the Player Overhead GUI's stroke color to brown
+	game.ServerStorage:FindFirstChild("Change Player Overhead GUI"):Fire(player)
 end
 
 --Handles request after the player presses "Yes" to enter Spectate Mode (Remote Event)

@@ -556,9 +556,11 @@ function TeleportAllPlayersToTheMap()
 		--Communicates with SpawnTeamPlayer script to spawn player at the map
 		SpawnPlayerToMap:Fire(player.Character)
 		
+		--References player's humanoid if they are either on NH101 team or Enemy team
+		local humanoid_fighter = player.Character:FindFirstChild("Humanoid") or player.Character:FindFirstChild("Zombie")
+		
 		--Sets player's humanoid walkspeed to 0
-		local humanoid = player.Character:FindFirstChild("Humanoid") or player.Character:FindFirstChild("Zombie")
-		humanoid.WalkSpeed = 0
+		if humanoid_fighter then humanoid_fighter.WalkSpeed = 0 end
 	end
 end
 
@@ -612,36 +614,41 @@ function assignPlayerTeams()
 	--team_selector = math.random(1,2)
 		
 	--Assigns player teams
-	for i, player in pairs(Player:GetPlayers()) do
+	for _, player in pairs(Player:GetPlayers()) do
 		
-		repeat
-			team_selector = math.random(1,2)
-		until team_selector ~= team_balancer
-		
---		team_selector = 1
-		
-		--Assigns player to be at NH101 Team or Enemy Team
-		if team_selector == 1 then
-			player.Team = NH101_Team
-		else
-			player.Team = Enemy_Team
-			local humanoid = player.Character:FindFirstChild("Humanoid")
-			humanoid.Name = "Zombie"
-			--Communicates with SpawnTeamPlayer script to add zombie scripts to player
-			game.ServerStorage:FindFirstChild("Add Zombie Scripts"):Fire(player.Character)
-		end
-		
-		--Changes the Player GUI background color based on his team
-		ChangePlayerGUIBackgroundColor:FireClient(player)
-		
-		--Communicates with SpawnTeamPlayer script to change the outline team color of player's name
-		game.ServerStorage:FindFirstChild("Change Player Overhead GUI"):Fire(player)
-		
-		--Switches team to balance out number of players (OPTION 0)
-		if team_balancer == 1 then
-			team_balancer = 2
-		else
-			team_balancer = 1
+		--Spectators are already in a team
+		if not player.Team then
+			
+			--Players will be assigned to a team in a pattern
+			repeat
+				team_selector = math.random(1,2)
+			until team_selector ~= team_balancer
+
+			--team_selector = 1
+
+			--Assigns player to be at NH101 Team or Enemy Team
+			if team_selector == 1 then
+				player.Team = NH101_Team
+			else
+				player.Team = Enemy_Team
+				local humanoid = player.Character:FindFirstChild("Humanoid")
+				humanoid.Name = "Zombie"
+				--Communicates with SpawnTeamPlayer script to add zombie scripts to player
+				game.ServerStorage:FindFirstChild("Add Zombie Scripts"):Fire(player.Character)
+			end
+
+			--Changes the Player GUI background color based on his team
+			ChangePlayerGUIBackgroundColor:FireClient(player)
+
+			--Communicates with SpawnTeamPlayer script to change the outline team color of player's name
+			game.ServerStorage:FindFirstChild("Change Player Overhead GUI"):Fire(player)
+
+			--Switches team to balance out number of players (OPTION 0)
+			if team_balancer == 1 then
+				team_balancer = 2
+			else
+				team_balancer = 1
+			end
 		end
 	end
 end
@@ -724,10 +731,10 @@ function addChaseScripts()
 	--Players Service
 	local Players = game:GetService("Players")
 	
-	--Restores all players' walkspeed to 16
+	--Restores player fighter's walkspeed to 16
 	for _, player in pairs(Players:GetChildren()) do
-		local humanoid = player.Character:FindFirstChild("Humanoid") or player.Character:FindFirstChild("Zombie")
-		humanoid.WalkSpeed = 16
+		local humanoid_fighter = player.Character:FindFirstChild("Humanoid") or player.Character:FindFirstChild("Zombie")
+		if humanoid_fighter then humanoid_fighter.WalkSpeed = 16 end	
 	end
 end
 
@@ -788,7 +795,7 @@ function Gameplay()
 	
 	------------------------ 1. BREAK ROOM INTERVENTION -----------------------
 	
-	wait(153) --Put back to 153 later
+--	wait(153) --Put back to 153 later
 	
 	--Selects a map
 	SelectedMap = Map[math.random(1,table.getn(Map))]
@@ -815,11 +822,11 @@ function Gameplay()
 	
 	--Lets all players know about the chosen opponent team and map
 	SendMessageToAllPlayers:FireAllClients(0)
-	wait(15) --Put back to 15 later
+--	wait(15) --Put back to 15 later
 			
 	--Lets players know that the match is about to begin
 	SendMessageToAllPlayers:FireAllClients(1)
-	wait(12) --Put back to 12 seconds later
+	wait(20) --Put back to 12 seconds later
 	
 	--Assign players a team
 	PlayerGuiBackgroundColorKey.Value = 1 
@@ -832,7 +839,7 @@ function Gameplay()
 	changeSky()
 	print("The current sky is "..SelectedSky)
 	
-	-------------------- 2. AI INITIAL SPAWNING AND COUNTDOWN ------------------
+	-------------------- 2. NPC INITIAL SPAWNING AND COUNTDOWN ------------------
 	
 	--Sets XYZ Range Values
 	setXYZSpawn()
@@ -865,10 +872,10 @@ function Gameplay()
 	ChangePlaylist:Fire()
 	
 	--Spawn Ally AIs
-	spawnAllyAI()
+--	spawnAllyAI()
 	
 	--Spawns Enemy AIs
-	spawnEnemyAI()
+--	spawnEnemyAI()
 	--print(AI_Count.." AIs has spawned in the map")
 	
 	--Tell players to "Fight!" 
@@ -962,7 +969,7 @@ function Gameplay()
 end
 
 
---[[Server runs here! (Comment out the loop to prevent the game from running) [testing purposes only]
+--Server runs here! (Comment out the loop to prevent the game from running) [testing purposes only]
 while true do
 	Gameplay()
-end]]
+end

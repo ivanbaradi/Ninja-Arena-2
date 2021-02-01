@@ -84,8 +84,6 @@ SpawnPlayerToMap.Event:Connect(spawnTeamPlayer)
 its appropriate team color]]
 function changePlayerOverheadGUIOutlineColor(player)
 	
-	print("changePlayerOverheadGUIOutlineColor function called")
-	
 	--Player's character
 	local character = player.Character
 	--Player Overhead GUI
@@ -100,17 +98,20 @@ function changePlayerOverheadGUIOutlineColor(player)
 	local brownColor = Color3.fromRGB(128, 43, 0) --Spectator Team Color
 	
 	--Get player's team
-	local PlayerTeam = player:WaitForChild("Team")
+	local PlayerTeam = player.Team
 
 	if PlayerTeam.Name == "Spectators" then
 		PlayerName.TextStrokeColor3 = brownColor
 		VIPTag.TextStrokeColor3 = brownColor
+		print("Player's stroke color changed to brown")
 	elseif PlayerTeam.Name == "Ninja Heroes 101" then
 		PlayerName.TextStrokeColor3 = blueColor
 		VIPTag.TextStrokeColor3 = blueColor
+		print("Player's stroke color changed to blue")
 	else
 		PlayerName.TextStrokeColor3 = redColor
 		VIPTag.TextStrokeColor3 = redColor
+		print("Player's stroke color changed to red")
 	end
 end
 
