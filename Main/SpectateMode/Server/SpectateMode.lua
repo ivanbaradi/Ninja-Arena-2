@@ -40,25 +40,28 @@ function RemoveWeaponsFromInventory(player)
 		return false
 	end
 	
-	--Player's weapon holder containing all player's wepaons
-	local WeaponHolder
+	--Gets player's weapon holder
+	local WeaponHolder = player:FindFirstChild("Weapon Holder")
 	
 	--If the player goes on Spectate Mode for the 1st time in the server
-	if not player:FindFirstChild("Weapon Holder") then
+	if not WeaponHolder then
 		WeaponHolder = Instance.new("Folder", player)
 		WeaponHolder.Name = "Weapon Holder"
 	end
 	
-	--Goes through player's items from StarterGear and removes only weapons from it and the backpack
+	--Removes player's wooden sword from starter gear and backpack and places it in the Weapon Holder
+	player.Backpack:FindFirstChild("Wooden Sword").Parent = WeaponHolder
+	
+	--Goes through player's items from StarterGear and removes weapons in it.
 	for _, obj in pairs(player.StarterGear:GetChildren()) do
 		if not isFood(obj.Name) then
-			--Removes item from the player's StarterGear and Backpack
-			obj:Remove()
+			
+			--Moves weapon to the Weapon Holder
+			obj.Parent = WeaponHolder
+			--Removes weapon from the player's backpack
 			player.Backpack:FindFirstChild(obj.Name):Remove()
 			
-			--Places weapon inside the WeaponHolder Folder
-			local ObjHolder = Instance.new("StringValue", WeaponHolder)
-			ObjHolder.Name = obj.Name
+			print(obj.Name.." is removed from your inventory!")		
 		end
 	end
 end
@@ -104,6 +107,9 @@ function EnterSpectateMode(player)
 	
 	--Communicates with SpawnTeamPlayer script to change the Player Overhead GUI's stroke color to brown
 	game.ServerStorage:FindFirstChild("Change Player Overhead GUI"):Fire(player)
+	
+	--Removes all weapons from the player's backpack and startergear
+	RemoveWeaponsFromInventory(player)
 end
 
 --Handles request after the player presses "Yes" to enter Spectate Mode (Remote Event)
