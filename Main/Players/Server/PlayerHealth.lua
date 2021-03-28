@@ -126,7 +126,7 @@ game.Players.PlayerAdded:Connect(function(player)
 		wait(1)
 		local leaderstats = player.leaderstats
 		if leaderstats then
-			local humanoid = char:FindFirstChild("Humanoid") or char:FindFirstChild("Zombie")
+			local humanoid = char:FindFirstChildOfClass("Humanoid")
 			if humanoid then
 				assignPlayerHP(player, humanoid, leaderstats)
 			end
