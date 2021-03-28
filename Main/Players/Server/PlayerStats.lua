@@ -6,11 +6,13 @@ local default_level = 1
 local default_cash = 0
 local default_xp = 0
 
+
+
 --Combines three keys (level, kills, and xp)
 DataStore2.Combine("DATA", "level", "cash", "XP")
 
 game.Players.PlayerAdded:Connect(function(player)
-			
+		
 	--Player's key for level, kills, and xp
 	local level_DataStore = DataStore2("level", player)
 	local cash_DataStore = DataStore2("cash", player)
@@ -51,11 +53,6 @@ game.Players.PlayerAdded:Connect(function(player)
 	--Player's XP
 	local XPoints = Instance.new("IntValue", leaderstats)
 	XPoints.Name = "XP"
-	
-	--Player's Target XP
-	local TargetXP = Instance.new("IntValue", player)
-	TargetXP.Name = "Target XP"
-	TargetXP.Value = 0
 		
 	--Calls everytime the level gets updated
 	local function updateLevel(updateLevelData)
@@ -83,48 +80,26 @@ game.Players.PlayerAdded:Connect(function(player)
 	cash_DataStore:OnUpdate(updateCash)
 	XP_DataStore:OnUpdate(updateXP)
 	
-	--[[For Testing Purposes (Comment them out soon) [GAME CREATOR]
-	You can modify your data here]]
-	
-	--NinjaGodIvan's ID
-	if player.UserId == 107263163 then
+	--Modifies player's stats (Modify your stats on the function's params)
+	local function changeStats(level, cash, xp)
+
+		LEVEL.Value = level
+		CASH.Value = cash
+		XPoints.Value = xp
 		
-		--Modify level, cash, and xp here
-		local LevelModified = 19
-		local CashModified = 0
-		local XPModified = 11500
-		
-		--[[
-		
-		LEVEL.Value = LevelModified
-		CASH.Value = CashModified
-		XPoints.Value = XPModified
-		
-		--[[
+		print(player.Name.."'s stats are modified.")
+
 		level_DataStore:Set(LEVEL.Value)
 		cash_DataStore:Set(CASH.Value)
 		XP_DataStore:Set(XPoints.Value)
-		--]] 
 		
-	--Testing User's ID
+		print(player.Name.."'s stats are saved.")
+	end
+	
+	--For Testing Purposes (Comment them out soon) [GAME CREATOR]
+	if player.UserId == 107263163 then
+		--changeStats(20, 25000, 12400)	
 	elseif player.UserId == 1822766716 then
-		--Modify level, cash, and xp here
-		local LevelModified = 40
-		local CashModified = 10000
-		local XPModified = 0
-		
-		--[[
-		
-		--LEVEL.Value = LevelModified
-		--CASH.Value = CashModified
-		--XPoints.Value = XPModified
-		
-		level_DataStore:Set(LEVEL.Value)
-		--cash_DataStore:Set(CASH.Value)
-		--XP_DataStore:Set(XPoints.Value)
-		
-		--]]
-		
+		--changeStats(1, 0, 0)
 	end
 end)
-
