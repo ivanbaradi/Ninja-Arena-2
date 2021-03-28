@@ -11,12 +11,11 @@ local Message2 = WarningMessages:FindFirstChild("Message 2")
 local YesButton = WarningMessages:FindFirstChild("Yes")
 local NoButton = WarningMessages:FindFirstChild("No")
 
---Makes Shop, Sell, Teleport, Spectate, and Speed buttons appear or disappear
+--Makes Shop, Sell, Spectate, and Speed buttons appear or disappear
 function ButtonVisibility(visibility_state)
 	SpectateModeButton.Visible = visibility_state
 	script.Parent.Parent.Parent:FindFirstChild("ShopGUI").ShopButton.Visible = visibility_state
 	script.Parent.Parent.Parent:FindFirstChild("SellWeaponGUI").SellButton.Visible = visibility_state
-	script.Parent.Parent.Parent:FindFirstChild("TeleportToPlaceGUI").TeleportButton.Visible = visibility_state
 	script.Parent.Parent.Parent:FindFirstChild("SpeedGUI").SpeedButton.Visible = visibility_state
 end
 
