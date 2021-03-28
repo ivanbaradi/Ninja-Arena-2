@@ -11,18 +11,13 @@ local Message2 = WarningMessages:FindFirstChild("Message 2")
 local YesButton = WarningMessages:FindFirstChild("Yes")
 local NoButton = WarningMessages:FindFirstChild("No")
 
---Makes Shop, Sell, Teleport, Spectate, and Speed buttons disappear
-function ButtonInvisibility()
-	
-	local ShopButton = script.Parent.Parent.Parent:FindFirstChild("ShopGUI").ShopButton
-	local SellButton = script.Parent.Parent.Parent:FindFirstChild("SellWeaponGUI").SellButton
-	local TeleportButton = script.Parent.Parent.Parent:FindFirstChild("TeleportToPlaceGUI").TeleportButton
-	local SpeedButton = script.Parent.Parent.Parent:FindFirstChild("SpeedGUI").SpeedButton
-
-	SpectateModeButton.Visible = false
-	ShopButton.Visible = false
-	SellButton.Visible = false
-	SpeedButton.Visible = false
+--Makes Shop, Sell, Teleport, Spectate, and Speed buttons appear or disappear
+function ButtonVisibility(visibility_state)
+	SpectateModeButton.Visible = visibility_state
+	script.Parent.Parent.Parent:FindFirstChild("ShopGUI").ShopButton.Visible = visibility_state
+	script.Parent.Parent.Parent:FindFirstChild("SellWeaponGUI").SellButton.Visible = visibility_state
+	script.Parent.Parent.Parent:FindFirstChild("TeleportToPlaceGUI").TeleportButton.Visible = visibility_state
+	script.Parent.Parent.Parent:FindFirstChild("SpeedGUI").SpeedButton.Visible = visibility_state
 end
 
 --Fires when the player presses "Spectate Mode" button
@@ -46,6 +41,9 @@ SpectateModeButton.MouseButton1Click:Connect(function()
 	end
 end)
 
+--Fires when the player exits Spectate Mode; Makes Shop, Sell, Teleport, Spectate, and Speed button reaappear
+game.ReplicatedStorage:FindFirstChild("AddCertainButtons").OnClientEvent:Connect(ButtonVisibility)
+
 --Goes on Spectate Mode
 YesButton.MouseButton1Click:Connect(function()
 	
@@ -53,16 +51,20 @@ YesButton.MouseButton1Click:Connect(function()
 	WarningMessages.Visible = false
 	
 	--Makes buttons disappear
-	ButtonInvisibility()
+	ButtonVisibility(false)
 	
 	--Tells the server to have player go on Spectate Mode
 	game.ReplicatedStorage:FindFirstChild("OnSpectateMode"):FireServer()
 end)
 
 --Closes warning message
-NoButton.MouseButton1Click:Connect(function()
+NoButton.MouseButton1Click:Connect(function() WarningMessages.Visible = false end)
+
+--Both the Spectate button and the warning message disappear if the player decided not to enter Spectate Mode
+game.ReplicatedStorage:FindFirstChild("RemoveSpectateComponents").OnClientEvent:Connect(function()
+	SpectateModeButton.Visible = false
 	WarningMessages.Visible = false
 end)
 
 --When player respawns and is on "Spectators" Team, then buttons must disappear
-if Player.Team and Player.Team.Name == "Spectators" then ButtonInvisibility() end
+if Player.Team and Player.Team.Name == "Spectators" then ButtonVisibility(false) end

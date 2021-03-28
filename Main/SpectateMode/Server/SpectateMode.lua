@@ -49,9 +49,19 @@ function RemoveWeaponsFromInventory(player)
 		WeaponHolder.Name = "Weapon Holder"
 	end
 	
-	--Removes player's wooden sword from starter gear and backpack and places it in the Weapon Holder
-	player.Backpack:FindFirstChild("Wooden Sword").Parent = WeaponHolder
+	--Wooden Sword from the player's backpack
+	local WoodenSwordBP = player.Backpack:FindFirstChild("Wooden Sword")
 	
+	--Movs player's wooden sword from the backpack to the Weapon Holder
+	if not WeaponHolder:FindFirstChild("Wooden Sword") then 
+		WoodenSwordBP.Parent = WeaponHolder
+		print("Wooden Sword is moved from your inventory to Weapon Holder!")
+	else
+		--Only occurs if the Spectator resets the character
+		WoodenSwordBP:Remove()
+		print("Wooden Sword is removed from your inventory after you respawned!")
+	end
+		
 	--Goes through player's items from StarterGear and removes weapons in it.
 	for _, obj in pairs(player.StarterGear:GetChildren()) do
 		if not isFood(obj.Name) then
@@ -61,10 +71,28 @@ function RemoveWeaponsFromInventory(player)
 			--Removes weapon from the player's backpack
 			player.Backpack:FindFirstChild(obj.Name):Remove()
 			
-			print(obj.Name.." is removed from your inventory!")		
+			print(obj.Name.." is moved from your inventory to Weapon Holder!")		
 		end
 	end
 end
+
+--Adds all player's weapons to the inventory
+function AddWeaponsToInventory(player)
+	
+	--Goes through all player's weapons in Weapon Holder
+	for _, weapon in pairs(player:FindFirstChild("Weapon Holder"):GetChildren()) do
+		
+		--Clones player's weapon to add in StarterGear and Backpack
+		weapon:Clone().Parent = player.Backpack
+		
+		--The wooden sword should not be also placed in the StarterGear, because it is already in the StarterPack
+		if weapon.Name ~= "Wooden Sword" then weapon:Clone().Parent = player.StarterGear end
+		
+		--Removes weapon from Weapon Holder
+		weapon:Remove()
+	end
+end
+
 
 --[[Player enters Spectate Mode. This function does the following:
 1. Creates a team called Spectators (if it doesn't exist)
@@ -117,3 +145,21 @@ game.ReplicatedStorage:FindFirstChild("OnSpectateMode").OnServerEvent:Connect(En
 
 --Handles request after the "Spectator" player respawns (Bindable Event)
 game.ServerStorage:FindFirstChild("Enter Spectate Mode").Event:Connect(EnterSpectateMode)
+
+--Handles request after the match is complete for players to exit spectate mode
+game.ServerStorage:FindFirstChild("Exit Spectate Mode").Event:Connect(function(players)
+	
+	for _, player in pairs(players:GetChildren()) do
+		if player.Team and player.Team.Name == "Spectators" then
+			
+			--Adds the player's Shop, Sell, Teleport, Spectate, and Speed buttons appear
+			game.ReplicatedStorage:FindFirstChild("AddCertainButtons"):FireClient(player, true)
+			
+			--Returns player the weapons
+			AddWeaponsToInventory(player)
+			
+			--Player's walkspeed is reduced to normal
+			player.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 16
+		end
+	end
+end)

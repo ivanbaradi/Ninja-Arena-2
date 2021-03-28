@@ -495,39 +495,32 @@ end
 
 --Teleports all players to the break room
 function TeleportAllPlayersToBreakRoom()
-	local Players = game:GetService("Players")
 	
-	--Replaces character's zombie scripts with humanoid ones
+	--Replaces character's zombie or spectator scripts with humanoid ones
 	local function AddHumanoidScripts(char)
-		--Will need to remove Zombie Scripts from the player
-		local ZombieAnimate = char:FindFirstChild("Animate")
-		local ZombieHealth = char:FindFirstChild("Health")
 		
-		if ZombieAnimate and ZombieHealth then
-			ZombieAnimate.Parent = nil
-			ZombieHealth.Parent = nil
-			
-			--Gets the Zombie version of these scripts
-			local HumanoidAnimate = game.ReplicatedStorage.PlayerHumanoidScripts:FindFirstChild("Animate"):Clone()
-			local HumanoidHealth = game.ReplicatedStorage.PlayerHumanoidScripts:FindFirstChild("Health"):Clone()
-			
-			--Places them inside the player's character
-			HumanoidAnimate.Parent = char
-			HumanoidHealth.Parent = char
-		end
+		--Will need to remove Zombie or Spectator scripts from the player
+		char:FindFirstChild("Animate"):Remove()
+		char:FindFirstChild("Health"):Remove()
+		
+		--Clones humanoid scripts and adds them to the player's character
+		for _, HumanoidScript in pairs(game.ReplicatedStorage.PlayerHumanoidScripts:GetChildren()) do HumanoidScript:Clone().Parent = char end
 	end
 	
-	for _, player in pairs(Players:GetChildren()) do
+	--Teleports all players back to the Break Room
+	for _, player in pairs(game:GetService("Players"):GetChildren()) do
 		
 		--Player's character
 		local char = player.Character
 		
 		--Will need to replace zombie scripts with humanoid scripts
 		if player.Team.Name ~= "Ninja Heroes 101" then
+			
+			--Adds humanoid scripts to the player
 			AddHumanoidScripts(char)
+			
 			--Changes the player humanoid's name to Humanoid
-			local humanoid = char:FindFirstChild("Zombie")
-			humanoid.Name = "Humanoid"
+			char:FindFirstChildOfClass("Humanoid").Name = "Humanoid"
 		end
 		
 		--Chooses X, Y, and Z positions to teleport player
@@ -655,10 +648,29 @@ end
 
 --Removes Teams
 function removeTeams()
+	
+	for _, team in pairs(game.Teams:GetChildren()) do 
+		team:Remove() 
+		print(team.Name.." Team is removed!")
+	end
+	
+	
+	--[[
+	
+	--Removes NH101 and Enemy Teams
 	local NH101_Team = game.Teams:FindFirstChild("Ninja Heroes 101")
 	local Enemy_Team = game.Teams:FindFirstChild(SelectedEnemyTeam.Name)
 	NH101_Team:Remove()
 	Enemy_Team:Remove()
+	
+	--Removes Spectators Team
+	local Spectators_Team = game.Teams:FindFirstChild("Spectators")
+	if Spectators_Team then 
+		Spectators_Team:Remove() 
+		print("Spectator Team removed!")
+	end
+	
+	]]
 end
 
 --Reverts all players' overhead GUI text stroke color back to black
@@ -795,7 +807,7 @@ function Gameplay()
 	
 	------------------------ 1. BREAK ROOM INTERVENTION -----------------------
 	
---	wait(153) --Put back to 153 later
+	wait(153) --Put back to 153 later
 	
 	--Selects a map
 	SelectedMap = Map[math.random(1,table.getn(Map))]
@@ -814,7 +826,7 @@ function Gameplay()
 	
 	--[TEST ONLY] Used to test a certain enemy team (Comment when done)
 --	SelectedEnemyTeam = EnemyTeams[1]
-	print("The selected enemy team is "..SelectedEnemyTeam.Name)
+--	print("The selected enemy team is "..SelectedEnemyTeam.Name)
 	
 	--Creates copies so other scripts have access to them
 	EnemyTeamName.Value = SelectedEnemyTeam.Name
@@ -822,11 +834,15 @@ function Gameplay()
 	
 	--Lets all players know about the chosen opponent team and map
 	SendMessageToAllPlayers:FireAllClients(0)
---	wait(15) --Put back to 15 later
+	wait(15) --Put back to 15 later
 			
 	--Lets players know that the match is about to begin
 	SendMessageToAllPlayers:FireAllClients(1)
-	wait(20) --Put back to 12 seconds later
+	wait(12) --Put back to 12 seconds later
+	
+	--Remove all Spectate Mode GUI components from all clients' interfaces
+	game.ReplicatedStorage:FindFirstChild("RemoveSpectateComponents"):FireAllClients()
+	wait(2)
 	
 	--Assign players a team
 	PlayerGuiBackgroundColorKey.Value = 1 
@@ -837,7 +853,7 @@ function Gameplay()
 	
 	--Can change the sky depending on the map or enemy team
 	changeSky()
-	print("The current sky is "..SelectedSky)
+--	print("The current sky is "..SelectedSky)
 	
 	-------------------- 2. NPC INITIAL SPAWNING AND COUNTDOWN ------------------
 	
@@ -872,10 +888,10 @@ function Gameplay()
 	ChangePlaylist:Fire()
 	
 	--Spawn Ally AIs
---	spawnAllyAI()
+	spawnAllyAI()
 	
 	--Spawns Enemy AIs
---	spawnEnemyAI()
+	spawnEnemyAI()
 	--print(AI_Count.." AIs has spawned in the map")
 	
 	--Tell players to "Fight!" 
@@ -910,9 +926,7 @@ function Gameplay()
 	RoundContinuing.Value = true
 		
 	--Loop repeats until either of the teams reaches the victory score
-	repeat 
-		wait(.1)
-	until allyPoints.Value >= VictoryScore or enemyPoints.Value >= VictoryScore
+	repeat wait(.1) until allyPoints.Value >= VictoryScore or enemyPoints.Value >= VictoryScore
 	
 	----------------------- 4. THE BATTLE HAS CONCLUDED ------------------------
 	
@@ -944,6 +958,8 @@ function Gameplay()
 	
 	-------------------------- 5. RETURN TO BREAK ROOM ---------------------------
 	
+	
+	
 	--Spawns the break room
 	spawnBreakRoom()
 	
@@ -961,11 +977,15 @@ function Gameplay()
 	--Will need to revert all player's Overhead GUI text stroke color back to black 
 	revertPlayerOverHeadGUI()
 	
-	--Remove Teams
+	--Spectator players exit Spectate Mode
+	game.ServerStorage:FindFirstChild("Exit Spectate Mode"):Fire(game.Players)
+	
+	--Remove all teams (NH101, Enemy, and Spectators)
 	removeTeams()
 	
 	--Despawns the Map
 	despawnMap()	
+	
 end
 
 
