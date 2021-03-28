@@ -97,6 +97,9 @@ local RoundHasEnded = game.ReplicatedStorage:FindFirstChild("RoundHasEnded")
 local ChangePlayerGUIBackgroundColor = game.ReplicatedStorage:FindFirstChild("ChangePlayerGUIBackgroundColor")
 --Change Playlist Bindable Event
 local ChangePlaylist = game.ServerStorage:FindFirstChild("Change Playlist")
+--True if players can use spectate mode button
+local CanUseSpectateModeButton = game.ReplicatedStorage:FindFirstChild("Can Use Spectate Mode Button")
+
 
 --Spawns enemy AIs from different groups per round
 function spawnEnemyAI()
@@ -612,13 +615,9 @@ function assignPlayerTeams()
 		--Spectators are already in a team
 		if not player.Team then
 			
-			--Players will be assigned to a team in a pattern
-			repeat
-				team_selector = math.random(1,2)
-			until team_selector ~= team_balancer
-
-			--team_selector = 1
-
+			--Will have the same number of players per team (OPTION 2)
+			repeat team_selector = math.random(1,2) until team_selector ~= team_balancer
+			
 			--Assigns player to be at NH101 Team or Enemy Team
 			if team_selector == 1 then
 				player.Team = NH101_Team
@@ -636,7 +635,8 @@ function assignPlayerTeams()
 			--Communicates with SpawnTeamPlayer script to change the outline team color of player's name
 			game.ServerStorage:FindFirstChild("Change Player Overhead GUI"):Fire(player)
 
-			--Switches team to balance out number of players (OPTION 0)
+			--Switches team to balance out number of players (OPTION 2)
+			--
 			if team_balancer == 1 then
 				team_balancer = 2
 			else
@@ -807,7 +807,7 @@ function Gameplay()
 	
 	------------------------ 1. BREAK ROOM INTERVENTION -----------------------
 	
-	wait(153) --Put back to 153 later
+--	wait(153) --Put back to 153 later
 	
 	--Selects a map
 	SelectedMap = Map[math.random(1,table.getn(Map))]
@@ -834,16 +834,19 @@ function Gameplay()
 	
 	--Lets all players know about the chosen opponent team and map
 	SendMessageToAllPlayers:FireAllClients(0)
-	wait(15) --Put back to 15 later
+--	wait(15) --Put back to 15 later
 			
 	--Lets players know that the match is about to begin
 	SendMessageToAllPlayers:FireAllClients(1)
-	wait(12) --Put back to 12 seconds later
-	
+	wait(23) --Put back to 12 seconds later
+		
 	--Remove all Spectate Mode GUI components from all clients' interfaces
 	game.ReplicatedStorage:FindFirstChild("RemoveSpectateComponents"):FireAllClients()
-	wait(2)
 	
+	--Players cannot use Spectate Mode button during the match
+	CanUseSpectateModeButton.Value = false
+	wait(2)
+		
 	--Assign players a team
 	PlayerGuiBackgroundColorKey.Value = 1 
 	assignPlayerTeams()
@@ -888,10 +891,10 @@ function Gameplay()
 	ChangePlaylist:Fire()
 	
 	--Spawn Ally AIs
-	spawnAllyAI()
+--	spawnAllyAI()
 	
 	--Spawns Enemy AIs
-	spawnEnemyAI()
+--	spawnEnemyAI()
 	--print(AI_Count.." AIs has spawned in the map")
 	
 	--Tell players to "Fight!" 
@@ -958,8 +961,6 @@ function Gameplay()
 	
 	-------------------------- 5. RETURN TO BREAK ROOM ---------------------------
 	
-	
-	
 	--Spawns the break room
 	spawnBreakRoom()
 	
@@ -967,6 +968,16 @@ function Gameplay()
 	wait(1)
 	TeleportAllPlayersToBreakRoom()
 	
+	--Players can use spectate mode button after all them are back to the Break Room
+	CanUseSpectateModeButton.Value = true
+	
+	--[[
+	Certain buttons appear on a player's interface
+	Fighters: Spectate Mode button appears
+	Spectators: Store, Sell, Speed, and Spectate Mode buttons appear
+	]]
+	game.ReplicatedStorage:FindFirstChild("AddCertainButtons"):FireAllClients(true)
+
 	--Players are not allowed to spawn on the map
 	CanSpawnOnMap.Value = false
 	

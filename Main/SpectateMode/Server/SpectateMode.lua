@@ -151,10 +151,7 @@ game.ServerStorage:FindFirstChild("Exit Spectate Mode").Event:Connect(function(p
 	
 	for _, player in pairs(players:GetChildren()) do
 		if player.Team and player.Team.Name == "Spectators" then
-			
-			--Adds the player's Shop, Sell, Teleport, Spectate, and Speed buttons appear
-			game.ReplicatedStorage:FindFirstChild("AddCertainButtons"):FireClient(player, true)
-			
+						
 			--Returns player the weapons
 			AddWeaponsToInventory(player)
 			

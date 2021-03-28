@@ -65,5 +65,8 @@ game.ReplicatedStorage:FindFirstChild("RemoveSpectateComponents").OnClientEvent:
 	WarningMessages.Visible = false
 end)
 
+--Spectate Mode button is invisible throughout the match
+if not game.ReplicatedStorage:FindFirstChild("Can Use Spectate Mode Button").Value then SpectateModeButton.Visible = false end 
+
 --When player respawns and is on "Spectators" Team, then buttons must disappear
 if Player.Team and Player.Team.Name == "Spectators" then ButtonVisibility(false) end
