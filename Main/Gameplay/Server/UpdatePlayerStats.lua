@@ -20,7 +20,15 @@ function updateStats(player, player_stats, update_val, store_type)
 end
 
 --Levels up player if they reach target XP, and regenerates player's health 
-function updateLevel(player, leaderstats)
+function updateLevel(player, leaderstats, LevelUpAmount)
+	
+	print("Level Up Amount: "..LevelUpAmount.Value)
+	
+	--Do not level up the player more than once
+	if LevelUpAmount.Value ~= 0 then return end
+	
+	LevelUpAmount.Value = 1
+	
 	if leaderstats.XP.Value >= player:FindFirstChild("Target XP").Value then
 
 		--Levels up player
@@ -32,9 +40,11 @@ function updateLevel(player, leaderstats)
 
 		--Regenerates player's health after leveling up
 		game.ServerStorage:FindFirstChild("Health Regeneration"):Fire(player, player.Character:FindFirstChildOfClass("Humanoid"), leaderstats)
-	else
-		print(player.Name.." cannot level up more than once")
+		wait(5)
 	end
+	
+	
+	LevelUpAmount.Value = 0
 end
 
 --Updates player new stats (level, cash, and xp)
@@ -47,7 +57,20 @@ game.ServerStorage:FindFirstChild("Send Player New Stats").Event:Connect(functio
 		--Players must be under Level 20 to earn XP and level up
 		if leaderstats.Level.Value < 20 then
 			updateStats(player, leaderstats.XP.Value, XP, "XP")
-			updateLevel(player, leaderstats)
+			
+			--[[ Players can only level up once. This will keep track how
+			many times a player can level up.
+			
+			0: Player can level up
+			1: Player can't level up]]
+			local LevelUpAmount = player:FindFirstChild("Level Up Amount")
+			if not LevelUpAmount then
+				LevelUpAmount = Instance.new("IntValue", player)
+				LevelUpAmount.Name = "Level Up Amount"
+				LevelUpAmount.Value = 0
+			end
+			
+			updateLevel(player, leaderstats, LevelUpAmount)
 		else
 			print("You have reached max level to earn XP here.")
 		end
