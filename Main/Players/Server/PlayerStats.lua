@@ -6,8 +6,6 @@ local default_level = 1
 local default_cash = 0
 local default_xp = 0
 
-
-
 --Combines three keys (level, kills, and xp)
 DataStore2.Combine("DATA", "level", "cash", "XP")
 
@@ -17,26 +15,6 @@ game.Players.PlayerAdded:Connect(function(player)
 	local level_DataStore = DataStore2("level", player)
 	local cash_DataStore = DataStore2("cash", player)
 	local XP_DataStore = DataStore2("XP", player)
-	
-	--Sets backups for each storage in case data loss occurs
-	level_DataStore:SetBackup(10)
-	cash_DataStore:SetBackup(10)
-	XP_DataStore:SetBackup(10)
-
-	--Clears level backup if it's set
-	if level_DataStore:IsBackup() then
-		level_DataStore:ClearBackup()
-	end
-	
-	--Clears kills backup if it's set
-	if cash_DataStore:IsBackup() then
-		cash_DataStore:ClearBackup()
-	end
-	
-	--Clears XP backup if it's set
-	if XP_DataStore:IsBackup() then
-		XP_DataStore:ClearBackup()
-	end
 
 	--Player's leaderboard data
 	local leaderstats = Instance.new("Folder", player)
@@ -82,13 +60,16 @@ game.Players.PlayerAdded:Connect(function(player)
 	
 	--Modifies player's stats (Modify your stats on the function's params)
 	local function changeStats(level, cash, xp)
-
+		
+		--
 		LEVEL.Value = level
 		CASH.Value = cash
 		XPoints.Value = xp
 		
 		print(player.Name.."'s stats are modified.")
-
+		
+		
+		--
 		level_DataStore:Set(LEVEL.Value)
 		cash_DataStore:Set(CASH.Value)
 		XP_DataStore:Set(XPoints.Value)
@@ -96,10 +77,11 @@ game.Players.PlayerAdded:Connect(function(player)
 		print(player.Name.."'s stats are saved.")
 	end
 	
-	--For Testing Purposes (Comment them out soon) [GAME CREATOR]
-	if player.UserId == 107263163 then
-		--changeStats(20, 25000, 12400)	
-	elseif player.UserId == 1822766716 then
+	--[[For Testing Purposes (Comment them out soon)
+		Edit level on 1st arg, cash on 2nd arg, and XP on 3rd arg]]
+	if player.UserId == 107263163 then --Game Creator
+		--changeStats(1, 0, 0)	
+	elseif player.UserId == 1822766716 then --Testing Player
 		--changeStats(1, 0, 0)
 	end
 end)
