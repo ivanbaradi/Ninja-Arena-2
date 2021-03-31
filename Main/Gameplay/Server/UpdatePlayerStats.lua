@@ -4,7 +4,7 @@ DataStore2.Combine("DATA", "level", "cash", "XP")
 --MarketPlace
 local MarketPlace = game:GetService("MarketplaceService")
 
---Updates player stats
+--Updates player stats (cash or XP)
 function updateStats(player, player_stats, update_val, store_type)
 	--Will check to see if you have VIP to earn double or triple cash
 	if MarketPlace:UserOwnsGamePassAsync(player.UserId, 11420646) --[[MEGA VIP 3x Cash]] then
@@ -15,18 +15,19 @@ function updateStats(player, player_stats, update_val, store_type)
 		player_stats += update_val
 	end
 
-	--Saves Player's Cash
+	--Saves player's cash
 	DataStore2(store_type, player):Set(player_stats)
 end
 
 --Levels up player if they reach target XP, and regenerates player's health 
 function updateLevel(player, leaderstats, LevelUpAmount)
 	
-	print("Level Up Amount: "..LevelUpAmount.Value)
+--	print("Level Up Amount: "..LevelUpAmount.Value)
 	
 	--Do not level up the player more than once
 	if LevelUpAmount.Value ~= 0 then return end
 	
+	--Prevents level system from being manipulated
 	LevelUpAmount.Value = 1
 	
 	if leaderstats.XP.Value >= player:FindFirstChild("Target XP").Value then
@@ -43,7 +44,7 @@ function updateLevel(player, leaderstats, LevelUpAmount)
 		wait(5)
 	end
 	
-	
+	--Players are able to level up again
 	LevelUpAmount.Value = 0
 end
 
@@ -56,6 +57,8 @@ game.ServerStorage:FindFirstChild("Send Player New Stats").Event:Connect(functio
 
 		--Players must be under Level 20 to earn XP and level up
 		if leaderstats.Level.Value < 20 then
+			
+			--Gives players XP
 			updateStats(player, leaderstats.XP.Value, XP, "XP")
 			
 			--[[ Players can only level up once. This will keep track how
@@ -70,6 +73,7 @@ game.ServerStorage:FindFirstChild("Send Player New Stats").Event:Connect(functio
 				LevelUpAmount.Value = 0
 			end
 			
+			--Levels up player
 			updateLevel(player, leaderstats, LevelUpAmount)
 		else
 			print("You have reached max level to earn XP here.")
