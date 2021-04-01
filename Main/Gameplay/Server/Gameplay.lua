@@ -598,26 +598,36 @@ function assignPlayerTeams()
 	Enemy_Team.Name = SelectedEnemyTeam.Name
 	Enemy_Team.AutoAssignable = true
 	Enemy_Team.TeamColor = BrickColor.new("Bright red")
-		
+	
+	--[[ Team Types (You can change how you want to assign players)
+	0: Balance teams out
+	1: All Players in the same team 
+	
+	(Set the value to 0 for the actual gameplay)]]
+	local team_type = 1
+	
 	--[[ Used to balance out teams (Prevents one side from having too many teammates)
-	1: Ninja Heroes 101, 2: Enemy Team ]]
-	local team_balancer = math.random(1,2)
+	1: Ninja Heroes 101, 2: Enemy Team (OPTION 0)]] 
+	local team_balancer
 			
 	--Assigns player a team
 	local team_selector
 	
-	--If you want all players to be on the same team of a different team (OPTION 1)
-	--team_selector = math.random(1,2)
-		
+	if team_type == 0 then 
+		team_balancer = math.random(1,2) --Balancer is used to accumulate the same num of players per team
+	else
+		team_selector = 2 --math.random(1,2) --All players are going to be at the same team
+	end
+
 	--Assigns player teams
 	for _, player in pairs(Player:GetPlayers()) do
 		
 		--Spectators are already in a team
 		if not player.Team then
 			
-			--Will have the same number of players per team (OPTION 2)
-			repeat team_selector = math.random(1,2) until team_selector ~= team_balancer
-			
+			--Will have the same number of players per team (OPTION 0)
+			if team_type == 0 then repeat team_selector = math.random(1,2) until team_selector ~= team_balancer end
+						
 			--Assigns player to be at NH101 Team or Enemy Team
 			if team_selector == 1 then
 				player.Team = NH101_Team
@@ -635,12 +645,13 @@ function assignPlayerTeams()
 			--Communicates with SpawnTeamPlayer script to change the outline team color of player's name
 			game.ServerStorage:FindFirstChild("Change Player Overhead GUI"):Fire(player)
 
-			--Switches team to balance out number of players (OPTION 2)
-			--
-			if team_balancer == 1 then
-				team_balancer = 2
-			else
-				team_balancer = 1
+			--Switches team to balance out number of players (OPTION 0)
+			if team_type == 0 then
+				if team_balancer == 1 then
+					team_balancer = 2
+				else
+					team_balancer = 1
+				end
 			end
 		end
 	end
@@ -653,24 +664,6 @@ function removeTeams()
 		team:Remove() 
 		print(team.Name.." Team is removed!")
 	end
-	
-	
-	--[[
-	
-	--Removes NH101 and Enemy Teams
-	local NH101_Team = game.Teams:FindFirstChild("Ninja Heroes 101")
-	local Enemy_Team = game.Teams:FindFirstChild(SelectedEnemyTeam.Name)
-	NH101_Team:Remove()
-	Enemy_Team:Remove()
-	
-	--Removes Spectators Team
-	local Spectators_Team = game.Teams:FindFirstChild("Spectators")
-	if Spectators_Team then 
-		Spectators_Team:Remove() 
-		print("Spectator Team removed!")
-	end
-	
-	]]
 end
 
 --Reverts all players' overhead GUI text stroke color back to black
@@ -807,7 +800,7 @@ function Gameplay()
 	
 	------------------------ 1. BREAK ROOM INTERVENTION -----------------------
 	
---	wait(153) --Put back to 153 later
+	wait(153) --Put back to 153 later
 	
 	--Selects a map
 	SelectedMap = Map[math.random(1,table.getn(Map))]
@@ -819,14 +812,14 @@ function Gameplay()
 	MapIndex.Value = SelectedMap.Name
 
 	--Selects an enemy team
-	--SelectedEnemyTeam = EnemyTeams[math.random(1,table.getn(Teams)]
+--	SelectedEnemyTeam = EnemyTeams[math.random(1,table.getn(Teams)]
 	
 	--Only teams with NPCs can be selected at this time
 	SelectedEnemyTeam = EnemyTeams[math.random(1,3)]
 	
 	--[TEST ONLY] Used to test a certain enemy team (Comment when done)
 --	SelectedEnemyTeam = EnemyTeams[1]
---	print("The selected enemy team is "..SelectedEnemyTeam.Name)
+	print("The selected enemy team is "..SelectedEnemyTeam.Name)
 	
 	--Creates copies so other scripts have access to them
 	EnemyTeamName.Value = SelectedEnemyTeam.Name
@@ -834,11 +827,11 @@ function Gameplay()
 	
 	--Lets all players know about the chosen opponent team and map
 	SendMessageToAllPlayers:FireAllClients(0)
---	wait(15) --Put back to 15 later
+	wait(15) --Put back to 15 later
 			
 	--Lets players know that the match is about to begin
 	SendMessageToAllPlayers:FireAllClients(1)
-	wait(23) --Put back to 12 seconds later
+	wait(12) --Put back to 12 seconds later
 		
 	--Remove all Spectate Mode GUI components from all clients' interfaces
 	game.ReplicatedStorage:FindFirstChild("RemoveSpectateComponents"):FireAllClients()
@@ -891,10 +884,10 @@ function Gameplay()
 	ChangePlaylist:Fire()
 	
 	--Spawn Ally AIs
---	spawnAllyAI()
+	spawnAllyAI()
 	
 	--Spawns Enemy AIs
---	spawnEnemyAI()
+	spawnEnemyAI()
 	--print(AI_Count.." AIs has spawned in the map")
 	
 	--Tell players to "Fight!" 
@@ -1001,6 +994,4 @@ end
 
 
 --Server runs here! (Comment out the loop to prevent the game from running) [testing purposes only]
-while true do
-	Gameplay()
-end
+while true do Gameplay() end

@@ -48,19 +48,19 @@ function updateLevel(player, leaderstats, LevelUpAmount)
 	LevelUpAmount.Value = 0
 end
 
---Updates player new stats (level, cash, and xp)
-game.ServerStorage:FindFirstChild("Send Player New Stats").Event:Connect(function(player, leaderstats, cash, XP)
+--Runs through the script
+function run(player, leaderstats, cash, XP)
 	if leaderstats then					
-		
+
 		--Gives players cash
 		updateStats(player, leaderstats.Cash.Value, cash, "cash")
 
 		--Players must be under Level 20 to earn XP and level up
 		if leaderstats.Level.Value < 20 then
-			
+
 			--Gives players XP
 			updateStats(player, leaderstats.XP.Value, XP, "XP")
-			
+
 			--[[ Players can only level up once. This will keep track how
 			many times a player can level up.
 			
@@ -72,11 +72,16 @@ game.ServerStorage:FindFirstChild("Send Player New Stats").Event:Connect(functio
 				LevelUpAmount.Name = "Level Up Amount"
 				LevelUpAmount.Value = 0
 			end
-			
+
 			--Levels up player
 			updateLevel(player, leaderstats, LevelUpAmount)
 		else
 			print("You have reached max level to earn XP here.")
 		end
 	end
-end)
+end
+
+--Updates player's stats after killing an NPC enemy
+game.ServerStorage:FindFirstChild("Send Player New Stats").Event:Connect(run)
+--Updates player's stats after finishing the match
+game.ReplicatedStorage:FindFirstChild("Send Player Bonus Stats").OnServerEvent:Connect(run)

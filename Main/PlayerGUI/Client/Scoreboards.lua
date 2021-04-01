@@ -122,9 +122,6 @@ RoundHasEnded.OnClientEvent:Connect(function()
 	--Gets leaderstats to check if player is under Level 20
 	local leaderstats = player:WaitForChild("leaderstats")
 	
-	--Result (0: Won, 1: Lost, 2: Tied)
-	local result
-	
 	--Sound Object
 	local Sound = game.Workspace:FindFirstChild("Results")
 	--List of Result Song
@@ -136,62 +133,94 @@ RoundHasEnded.OnClientEvent:Connect(function()
 	
 	--[[ Message1 and Message2 changed color to red, blue, or gray ]]
 	--Blue Color (Ninja Heroes 101 Team)
-	--local blueColor = Color3.fromRGB(77, 121, 255)
+	local blueColor = Color3.fromRGB(77, 121, 255)
 	--Red Color (Enemy Team)
-	--local redColor = Color3.fromRGB(255, 77, 77)
+	local redColor = Color3.fromRGB(255, 77, 77)
+	--White Color
+	local whiteColor = Color3.fromRGB(255, 255, 255)
 	
 	--Delivers results to the player
-	local function Results(color, resultMessage, XP_Message, soundID, RESULT)
+	local function Results(color, resultMessage, statsMessage, soundID)
 		Message1.TextColor3 = color
 		Message2.TextColor3 = color
 		Message1.Text = resultMessage
-		Message2.Text = XP_Message
+		Message2.Text = statsMessage
 		Sound.SoundId = soundID
-		result = RESULT
+	end
+	
+	--Player's bonus cash and XP
+	local bonus_cash = 0
+	local bonus_xp = 0
+	
+	--Creates a message about bonus cash and bonus XP; Returns it
+	local function createMessageTwo()
+		
+		--MarketPlace
+		local MarketPlace = game:GetService("MarketplaceService")
+		
+		--[[Multiplier (1 => No VIP, 2 => VIP, 3 => MEGA VIP
+			Doesn't update bonus cash and xp values]]
+		local multiplier = 1
+		
+		if MarketPlace:UserOwnsGamePassAsync(player.UserId, 11420646) --[[MEGA VIP]] then
+			multiplier = 3
+		elseif MarketPlace:UserOwnsGamePassAsync(player.UserId, 11420620) --[[VIP]] then
+			multiplier = 2
+		end
+		
+		--Lets the player know that they earned bonus cash and XP
+		if bonus_xp ~= 0 then return "+"..tostring(bonus_xp * multiplier).."XP & +"..tostring(bonus_cash * multiplier).." Cash" end
+		
+		--Lets Level 20+ player know that they only earned bonus cash 
+		return "+"..tostring(bonus_cash * multiplier).." Cash"
 	end
 	
 	if player.Team.Name == "Ninja Heroes 101" or player.Team.Name == EnemyTeamName.Value then --For Fighters
 		if AllyPoints.Value > EnemyPoints.Value then --NH101 Team Won!
 			if player.Team.Name == "Ninja Heroes 101" then
-				Results(Color3.fromRGB(77, 121, 255), "Ninja Heroes 101 Won!", "+150XP", ResultSongID[1], 0)
+				bonus_cash = 50
+				if player.leaderstats.Level.Value < 20 then bonus_xp = 100 end
+				Results(blueColor, "Ninja Heroes 101 Won!", createMessageTwo(), ResultSongID[1])
 			else --Enemy Team Lost
-				Results(Color3.fromRGB(255, 77, 77), EnemyTeamName.Value.." Lost", "+50XP", ResultSongID[2], 1)
+				bonus_cash = 15
+				if player.leaderstats.Level.Value < 20 then bonus_xp = 50 end
+				Results(redColor, EnemyTeamName.Value.." Lost", createMessageTwo(), ResultSongID[2])
 			end
 		elseif AllyPoints.Value < EnemyPoints.Value then --If the Enemy Team won!
 			if player.Team.Name == "Ninja Heroes 101" then 
-				Results(Color3.fromRGB(77, 121, 255), "Ninja Heroes 101 Lost", "+50XP", ResultSongID[2], 1)
+				bonus_cash = 15
+				if player.leaderstats.Level.Value < 20 then bonus_xp = 50 end
+				Results(blueColor, "Ninja Heroes 101 Lost", createMessageTwo(), ResultSongID[2])
 			else --NH101 Lost
-				Results(Color3.fromRGB(255, 77, 77), EnemyTeamName.Value.." Won!", "+150XP", ResultSongID[1], 0)
+				bonus_cash = 50
+				if player.leaderstats.Level.Value < 20 then bonus_xp = 100 end
+				Results(redColor, EnemyTeamName.Value.." Won!", createMessageTwo(), ResultSongID[1])
 			end
 		else --Tied ._.
-			Results(Color3.fromRGB(255, 255, 255), "Tied", "+75XP", ResultSongID[3], 2)
-		end
-		
-		--Tells the server to give cash to player after the round has ended
-		game.ReplicatedStorage:FindFirstChild("Add Round Cash To Player"):FireServer(result)
-		
-		--Gives player XP for finishing the match and makes XP message visible
-		if leaderstats.Level.Value < 20 then			
-			--Tells how many XP the player has
-			Message2.Visible = true
-			--Gets server to give player Round XP
-			AddRoundXPToPlayer:FireServer(result)
+			bonus_cash = 25
+			if player.leaderstats.Level.Value < 20 then bonus_xp = 75 end
+			Results(whiteColor, "Tied", createMessageTwo(), ResultSongID[3])
 		end
 	else --For Spectators
 		if AllyPoints.Value > EnemyPoints.Value then
-			Results(Color3.fromRGB(77, 121, 255), "Ninja Heroes 101 Won!", "", ResultSongID[1], nil)
+			Results(blueColor, "Ninja Heroes 101 Won!", "", ResultSongID[1])
 		elseif AllyPoints.Value < EnemyPoints.Value then
-			Results(Color3.fromRGB(255, 77, 77), EnemyTeamName.Value.." Won!", "", ResultSongID[1], nil)
+			Results(redColor, EnemyTeamName.Value.." Won!", "", ResultSongID[1])
 		else
-			Results(Color3.fromRGB(255, 255, 255), "Tied", "", ResultSongID[3], nil)
+			Results(whiteColor, "Tied", "", ResultSongID[3])
 		end
 	end
 	
 	--Plays the winning, losing, or tied song
 	Sound:Play()
 	
-	--Makes Victory and XP visible to the player
+	--[[Displays the message of player's victory, loss, or tie.
+	Tells player how much bonus cash and xp they earned.]]
 	Message1.Visible = true
+	Message2.Visible = true
+	
+	--Tells server to give players bonus cash and xp
+	game.ReplicatedStorage:FindFirstChild("Send Player Bonus Stats"):FireServer(leaderstats, bonus_cash, bonus_xp)
 	
 	wait(8)
 	
