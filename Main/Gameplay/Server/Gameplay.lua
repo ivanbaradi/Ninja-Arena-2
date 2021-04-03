@@ -616,7 +616,7 @@ function assignPlayerTeams()
 	if team_type == 0 then 
 		team_balancer = math.random(1,2) --Balancer is used to accumulate the same num of players per team
 	else
-		team_selector = 2 --math.random(1,2) --All players are going to be at the same team
+		team_selector = 1 --math.random(1,2) --All players are going to be at the same team
 	end
 
 	--Assigns player teams
@@ -800,7 +800,9 @@ function Gameplay()
 	
 	------------------------ 1. BREAK ROOM INTERVENTION -----------------------
 	
-	wait(153) --Put back to 153 later
+	--Players have a minute break before the match starts.
+	
+	wait(31) --Put back to 31 later
 	
 	--Selects a map
 	SelectedMap = Map[math.random(1,table.getn(Map))]
@@ -967,8 +969,7 @@ function Gameplay()
 	--[[
 	Certain buttons appear on a player's interface
 	Fighters: Spectate Mode button appears
-	Spectators: Store, Sell, Speed, and Spectate Mode buttons appear
-	]]
+	Spectators: Store, Sell, Speed, and Spectate Mode buttons appear ]]
 	game.ReplicatedStorage:FindFirstChild("AddCertainButtons"):FireAllClients(true)
 
 	--Players are not allowed to spawn on the map
@@ -989,9 +990,11 @@ function Gameplay()
 	
 	--Despawns the Map
 	despawnMap()	
-	
 end
 
 
 --Server runs here! (Comment out the loop to prevent the game from running) [testing purposes only]
 while true do Gameplay() end
+
+--Runs gameplay once (Test Only)
+--Gameplay()
