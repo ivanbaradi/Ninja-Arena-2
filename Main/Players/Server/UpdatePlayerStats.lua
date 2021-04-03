@@ -14,7 +14,7 @@ function updateStats(player, player_stats, update_val, store_type)
 	else
 		player_stats += update_val
 	end
-
+	
 	--Saves player's cash
 	DataStore2(store_type, player):Set(player_stats)
 end
@@ -34,6 +34,13 @@ function updateLevel(player, leaderstats, LevelUpAmount)
 
 		--Levels up player
 		leaderstats.Level.Value += 1
+		
+		--In Version 1.0, players can rank up to level 20 and accumulate up to 11,750 XP.
+		if leaderstats.Level.Value == 20 and leaderstats.XP.Value ~= 11750 then 
+			--Readjust player's XP to 11,750 and saves it
+			leaderstats.XP.Value = 11750 
+			DataStore2("XP", player):Set(leaderstats.XP.Value)
+		end
 
 		--Saves player's level
 		DataStore2("level", player):Set(leaderstats.Level.Value)
