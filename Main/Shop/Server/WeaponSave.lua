@@ -44,9 +44,7 @@ end
 
 --Saving player's weapons (No Gamepass Weapons are to be saved)
 game.Players.PlayerRemoving:Connect(function(player)
-	
-	--
-	
+		
 	--Saves player's weapons from Weapon Holder or StarterGear
 	if player.Team and player.Team.Name == "Spectators" then
 		print("Saving weapons from Weapon Holder")
@@ -55,27 +53,4 @@ game.Players.PlayerRemoving:Connect(function(player)
 		print("Saving weapons from player's StarterGear")
 		SaveWeapons(player, player.StarterGear)
 	end
-	
-	--[[
-	
-	local player_backpack = {}
-	local count = 1
-	
-	--Adds all player weapons besides the Wooden Sword in the starter gear 
-	print("Weapons to be saved:")
-	for i, weapon in pairs(player.StarterGear:GetChildren()) do
-		if weapon then
-			if weapon.Name ~= "Bluesteel Katana" and weapon.Name ~= "Immortal God Long Sword" then
-				table.insert(player_backpack, count, weapon.Name)
-				print("Weapon "..count..": "..weapon.Name)
-				count = count + 1
-			end
-		end
-	end
-	
-	BackpackStore:SetAsync("User-"..player.UserId, player_backpack)
-	
-	]]
-	
-	
 end)
