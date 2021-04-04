@@ -117,8 +117,8 @@ while wait(0.1) do
 		XPMultiplier_Object.Value = XPMultiplier
 		
 		--Displays the player's current XP and target XP
-		text_XP.Text = tostring(formatNumber(player.leaderstats.XP.Value)).."/"..tostring(formatNumber(TargetXP))
+		text_XP.Text = tostring(formatNumber(player.leaderstats.XP.Value)).."/"..tostring(formatNumber(TargetXP)).."XP"
 	else
-		text_XP.Text = "MAX XP"
+		text_XP.Text = "MAX LEVEL"
 	end
 end
