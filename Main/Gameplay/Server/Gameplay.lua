@@ -3,11 +3,11 @@ EACH TEAM HAS THE FOLLOWING:
 1. Name: Name of the team
 2. Icon: Used to display it on the scoreboard
 ]]
-local EnemyTeams = { --Add Icons to 3 other teams
+local EnemyTeams = { --Add Icons to 4 other teams
 	{Name = "Syberians", Icon = "rbxassetid://5611786471"},
 	{Name = "Korblox", Icon = "rbxassetid://5797967479"},
 	{Name = "The Undead", Icon = "rbxassetid://5857376360"},
-	{Name = "The Kingdom", Icon = ""}
+	{Name = "The Kingdom", Icon = "rbxassetid://6704269989"}
 }
 
 --[[
@@ -110,7 +110,6 @@ function spawnEnemyAI()
 	local EnemyAIs
 	--Selects AI pos value to spawn and prevents another AI from spawning
 	local SelectedAIs = {}	
-	
 	--Spawns AI in a given position
 	local function spawnAI(enemyAI)				
 		--Cloning AI (Model)
@@ -147,6 +146,8 @@ function spawnEnemyAI()
 			x = 4
 		elseif SelectedEnemyTeam.Name == "Korblox" then
 			x = 3
+		else --The Kingdom
+			x = 5
 		end
 		
 		while Selected < MaxSelected do
@@ -292,7 +293,43 @@ function spawnEnemyAI()
 		--Inserts Brute Zombie
 		table.insert(SelectedAIs, 5, EnemyAIs[6])
 	else
+		findTeam = game.ServerStorage:FindFirstChild("The Kingdom")
+
+		EnemyAIs = {
+			--SET 1
+			{Name = "Knight", TotalSpawn = 13},
+			{Name = "Blue Knight", TotalSpawn = 7},
+			{Name = "Redcliff Knight", TotalSpawn = 5},
+			--SET 2
+			{Name = "Redcliff Elite", TotalSpawn = 4},
+			{Name = "Redcliff Assassin", TotalSpawn = 2},
+			--SET 3
+			{Name = "Colossal Knight", TotalSpawn = 1},
+			{Name = "Guardian", TotalSpawn = 1},
+			--SET 4
+			{Name = "Marco", TotalSpawn = 1},
+			{Name = "Vaquez", TotalSpawn = 1},
+			{Name = "Clayton", TotalSpawn = 1}
+		}
 		
+		--Inserts Knight, Blue Knight, and Redcliff Knight NPCs (SET 1)
+		table.insert(SelectedAIs, 1,EnemyAIs[1])
+		table.insert(SelectedAIs, 2,EnemyAIs[2])
+		table.insert(SelectedAIs, 3,EnemyAIs[3])
+				
+		--Inserts either Redcliff Elite or Redcliff Assassin (SET 2)
+		local choice = EnemyAIs[math.random(4,5)]
+		table.insert(SelectedAIs, 4, choice)
+		print(choice.Name.." is selected!")
+		
+		--Inserts either Colossal Knight, Guardian, or Unique Characters (SET 3)
+		choice = math.random(1,2)
+		
+		if choice == 1 then --Colossal Knight or Guardian
+			table.insert(SelectedAIs, 5, EnemyAIs[math.random(6,7)])
+		else --Unique Characters
+			selectUniqueAI(8) 
+		end
 	end
 		
 	--Spawning in Enemy AIs
@@ -386,7 +423,7 @@ function spawnAllyAI()
 	end
 	
 	--SET 1 OR SET 2: Choose either "Male Ninja" and "Female Ninja" OR "Male Ninja 2" and "Female Ninja 2" based on the enemy team
-	if SelectedEnemyTeam.Name == "Syberians" or SelectedEnemyTeam.Name == "Kingdom Hearts" then
+	if SelectedEnemyTeam.Name == "Syberians" or SelectedEnemyTeam.Name == "The Kingdom" then
 		table.insert(selectedAIs, 1, AllyAIs[1])
 		table.insert(selectedAIs, 2, AllyAIs[2])
 		print("Male Ninja and Female Ninja are selected!")
@@ -467,7 +504,6 @@ function despawnAIs()
 		wait(1) --Prevents the game from crashing!
 	end
 end
-
 
 --Spawns the map
 function spawnMap()
@@ -616,7 +652,7 @@ function assignPlayerTeams()
 	if team_type == 0 then 
 		team_balancer = math.random(1,2) --Balancer is used to accumulate the same num of players per team
 	else
-		team_selector = 1 --math.random(1,2) --All players are going to be at the same team
+		team_selector = math.random(1,2) --All players are going to be at the same team
 	end
 
 	--Assigns player teams
@@ -814,13 +850,13 @@ function Gameplay()
 	MapIndex.Value = SelectedMap.Name
 
 	--Selects an enemy team
---	SelectedEnemyTeam = EnemyTeams[math.random(1,table.getn(Teams)]
+	SelectedEnemyTeam = EnemyTeams[math.random(1,table.getn(EnemyTeams))]
 	
 	--Only teams with NPCs can be selected at this time
-	SelectedEnemyTeam = EnemyTeams[math.random(1,3)]
+--	SelectedEnemyTeam = EnemyTeams[math.random(1,3)]
 	
 	--[TEST ONLY] Used to test a certain enemy team (Comment when done)
---	SelectedEnemyTeam = EnemyTeams[1]
+--	SelectedEnemyTeam = EnemyTeams[4]
 	print("The selected enemy team is "..SelectedEnemyTeam.Name)
 	
 	--Creates copies so other scripts have access to them
