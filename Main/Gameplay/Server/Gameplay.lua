@@ -7,7 +7,7 @@ local EnemyTeams = { --Add Icons to 4 other teams
 	{Name = "Syberians", Icon = "rbxassetid://5611786471"},
 	{Name = "Korblox", Icon = "rbxassetid://5797967479"},
 	{Name = "The Undead", Icon = "rbxassetid://5857376360"},
-	{Name = "The Kingdom", Icon = "rbxassetid://6704269989"}
+	{Name = "The Kingdom", Icon = "rbxassetid://6715996787"}
 }
 
 --[[

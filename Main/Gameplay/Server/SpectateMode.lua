@@ -49,16 +49,16 @@ function RemoveWeaponsFromInventory(player)
 		WeaponHolder.Name = "Weapon Holder"
 	end
 	
-	--Wooden Sword from the player's backpack
-	local WoodenSwordBP = player.Backpack:FindFirstChild("Wooden Sword")
+	--Wooden Sword from the player's backpack or character
+	local WoodenSword = player.Backpack:FindFirstChild("Wooden Sword") or player.Character:FindFirstChild("Wooden Sword")
 	
 	--Movs player's wooden sword from the backpack to the Weapon Holder
 	if not WeaponHolder:FindFirstChild("Wooden Sword") then 
-		WoodenSwordBP.Parent = WeaponHolder
+		WoodenSword.Parent = WeaponHolder
 		print("Wooden Sword is moved from your inventory to Weapon Holder!")
 	else
 		--Only occurs if the Spectator resets the character
-		WoodenSwordBP:Remove()
+		WoodenSword:Remove()
 		print("Wooden Sword is removed from your inventory after you respawned!")
 	end
 		
@@ -68,8 +68,16 @@ function RemoveWeaponsFromInventory(player)
 			
 			--Moves weapon to the Weapon Holder
 			obj.Parent = WeaponHolder
-			--Removes weapon from the player's backpack
-			player.Backpack:FindFirstChild(obj.Name):Remove()
+			
+			--Player's weapon from the backpack
+			local objBP = player.Backpack:FindFirstChild(obj.Name)
+			
+			--Removes weapon from the player's backpack or character
+			if objBP then
+				objBP:Remove() 
+			else
+				player.Character:FindFirstChild(obj.Name):Remove() 
+			end
 			
 			print(obj.Name.." is moved from your inventory to Weapon Holder!")		
 		end
