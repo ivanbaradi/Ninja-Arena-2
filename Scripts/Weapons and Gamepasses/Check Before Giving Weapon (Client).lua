@@ -1,35 +1,34 @@
---[[
-
-This script is responsible for giving player weapons.
-It will check if the player reaches at a higher level
-and has enough cash to buy a weapon. If so, then 
-the script fires a remote event to tell the server to 
-clone the weapon from ReplicatedStorage and give that 
-to the player.
-
-In this prompt, the user is required to be at Level 23
-and have 1,050 cash to purchase a weapon. 
-
-]]
-
 --Player
 local player = game.Players.LocalPlayer
---Leaderstats
-local leaderstats = player.leaderstats
---Get access to script that gives weapons to players
-local give_weapon = game.ReplicatedStorage:FindFirstChild("GiveWeapon")
---Weapon Name
-local weapon_name = script.Parent.WeaponName.Text
---Level and cash requirement to buy weapon
-local required_level = 23
-local required_cash = 1050
+--Player's leaderstats
+local leaderstats = player:WaitForChild("leaderstats")
+--Weapon's Name
+local weapon = script.Parent:FindFirstChild("Weapon Name").Text
+--Level Label --> returns the level value rather than the whole label
+local required_level = string.sub(script.Parent:FindFirstChild("Level Label").Text, 7)
 
---Fires when player is purchasing a weapon
-script.Parent.MouseButton1Click:Connect(function ()
-	if leaderstats.Level.Value >= required_level and leaderstats.Cash.Value >= required_cash then
-		print("Sending weapon to player")
-		give_weapon:FireServer(weapon_name, required_cash)
+--Fires when player pressed the weapon button
+script.Parent.MouseButton1Click:Connect(function()
+	
+	if leaderstats.Level.Value >= tonumber(required_level) and not player.Backpack:FindFirstChild(weapon) and not player.Character:FindFirstChild(weapon) then
+		--Plays when the player clicks a button
+		game.Workspace:FindFirstChild("Button Clicked!"):Play()
+		--Tells the server to give the weapon to the player
+		game.ReplicatedStorage:FindFirstChild("Give Weapon"):FireServer(weapon)
+	elseif player.Backpack:FindFirstChild(weapon) or player.Character:FindFirstChild(weapon) then
+		print("Player already has "..weapon)
 	else
-		print("Player doesn't have enough money and/or has not reach at this level")
+		print("Player has not reach Level "..required_level.." yet to obtain "..weapon)
 	end
 end)
+
+wait(1)
+
+--Runs until the player reaches a required level
+while wait(.1) do
+	--Changes the required label text
+	if leaderstats.Level.Value >= tonumber(required_level) then
+		script.Parent:FindFirstChild("Required Label").Text = "Press to Equip"
+		break
+	end
+end
