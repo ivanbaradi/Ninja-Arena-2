@@ -24,11 +24,12 @@ end)
 
 wait(1)
 
---Runs until the player reaches a required level
 while wait(.1) do
-	--Changes the required label text
-	if leaderstats.Level.Value >= tonumber(required_level) then
-		script.Parent:FindFirstChild("Required Label").Text = "Press to Equip"
-		break
+	--Player has reached the requirement level but doesn't have the weapon
+	if leaderstats.Level.Value >= tonumber(required_level) and not player.StarterGear:FindFirstChild(weapon) then
+		script.Parent:FindFirstChild("Required Label").Text = "Equip It"
+	--Player has reached the requirement level and has the weapon
+	elseif leaderstats.Level.Value >= tonumber(required_level) and player.StarterGear:FindFirstChild(weapon) then
+		script.Parent:FindFirstChild("Required Label").Text = "Equipped"
 	end
 end

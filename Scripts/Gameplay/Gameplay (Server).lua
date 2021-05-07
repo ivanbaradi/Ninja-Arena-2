@@ -66,7 +66,7 @@ local PlayerCanReset = game.ReplicatedStorage:FindFirstChild("PlayerCanReset")
 --Can Spawn On Map Object
 local CanSpawnOnMap = game.ReplicatedStorage:FindFirstChild("Can Spawn On Map")
 --Score to Win
-local VictoryScore = 2000
+local VictoryScore = 2500
 
 --[[DisableSpeedButton Remote Event
 	The server will tell all clients to disable players' speed buttons,
@@ -373,7 +373,8 @@ function spawnAllyAI()
 		{Name = "Walter", TotalSpawn = 1},
 		{Name = "Katherine", TotalSpawn = 1},
 		{Name = "Jeff", TotalSpawn = 1},
-		{Name = "Jonah", TotalSpawn = 1}
+		{Name = "Jonah", TotalSpawn = 1},
+		{Name = "Marc", TotalSpawn = 1}
 	}
 		
 	--Spawns AI in a given position
@@ -637,10 +638,10 @@ function assignPlayerTeams()
 	
 	--[[ Team Types (You can change how you want to assign players)
 	0: Balance teams out
-	1: All Players in the same team 
+	1: All Players in the same team (Debugger)
 	
 	(Set the value to 0 for the actual gameplay)]]
-	local team_type = 1
+	local team_type = 0
 	
 	--[[ Used to balance out teams (Prevents one side from having too many teammates)
 	1: Ninja Heroes 101, 2: Enemy Team (OPTION 0)]] 
@@ -674,6 +675,8 @@ function assignPlayerTeams()
 				--Communicates with SpawnTeamPlayer script to add zombie scripts to player
 				game.ServerStorage:FindFirstChild("Add Zombie Scripts"):Fire(player.Character)
 			end
+			
+--			print("Assigned "..player.Name.." to "..player.Team.Name.." team.")
 
 			--Changes the Player GUI background color based on his team
 			ChangePlayerGUIBackgroundColor:FireClient(player)
@@ -689,16 +692,22 @@ function assignPlayerTeams()
 					team_balancer = 1
 				end
 			end
+		else
+--			print(player.Name.." is already in a team.")
 		end
 	end
 end
 
 --Removes Teams
-function removeTeams()
+function removeTeams()		
 	
+	--Removes a player from a team
+	for _, player in pairs(game.Players:GetChildren()) do player.Team = nil end
+	
+	--Removes a team from Teams
 	for _, team in pairs(game.Teams:GetChildren()) do 
 		team:Remove() 
-		print(team.Name.." Team is removed!")
+--		print(team.Name.." Team is removed!")
 	end
 end
 
@@ -836,9 +845,9 @@ function Gameplay()
 	
 	------------------------ 1. BREAK ROOM INTERVENTION -----------------------
 	
-	--Players have a minute break before the match starts.
+	--Players have a 90-second break before the match starts.
 	
-	wait(31) --Put back to 31 later
+	wait(61) --Put back to 61 later
 	
 	--Selects a map
 	SelectedMap = Map[math.random(1,table.getn(Map))]
