@@ -1,50 +1,50 @@
---Ally and Enemy Team Scoreboard
-local AllyTeamScoreboard = script.Parent:FindFirstChild("Ally Team Scoreboard")
-local EnemyTeamScoreboard = script.Parent:FindFirstChild("Enemy Team Scoreboard")
---AllyPoints and EnemyPoints Objects
-local AllyPoints = game.ReplicatedStorage.TeamPoints:FindFirstChild("AllyPoints")
-local EnemyPoints = game.ReplicatedStorage.TeamPoints:FindFirstChild("EnemyPoints")
---AddTeamPoints Remote Event
-local AddTeamPoints = game.ReplicatedStorage:FindFirstChild("AddTeamPoints")
---CreateScoreBoard Event
-local CreateScoreBoard = game.ReplicatedStorage:FindFirstChild("CreateScoreBoard")
---RemoveScoreBoard Event
-local RemoveScoreBoard = game.ReplicatedStorage:FindFirstChild("RemoveScoreBoard")
---EndRound Remote Event
-local EndTheRound = game.ReplicatedStorage:FindFirstChild("EndTheRound")
---True if points can get updates (All AIs must be initially spawned before setting this to true)
-local CanUpdateScore = game.ReplicatedStorage:FindFirstChild("CanUpdateScore")
+--Scoreboard GUI
+local GUI = script.Parent
 --Player Team
 local player = game.Players.LocalPlayer
---SendMessageToAllPlayers Remote Event
-local SendMessageToAllPlayers = game.ReplicatedStorage:FindFirstChild("SendMessageToAllPlayers")
---SendMessageToAllPlayers2 Remote Event
-local SendMessageToAllPlayers2 = game.ReplicatedStorage:FindFirstChild("SendMessageToAllPlayers2")
+--Gets player's leaderstats
+local leaderstats = player:WaitForChild("leaderstats")
+--Gets player's level
+local player_level = leaderstats:WaitForChild('Level').Value
+--ReplicatedStorage
+local ReplicatedStorage = game.ReplicatedStorage
+--MarketPlace
+local MarketPlace = game:GetService("MarketplaceService")
+--Max Level in this game mode
+local MaxLevel = ReplicatedStorage['Max Level'].Value
+--Ally Points and Enemy Points Objects
+local TeamPoints = ReplicatedStorage['Team Points']
+local AllyPoints = TeamPoints["Ally Points"]
+local EnemyPoints = TeamPoints["Enemy Points"]
+--Sound Object
+local ResultsSong = workspace:FindFirstChild("Results")
+--Ally and Enemy Team Scoreboard
+local AllyTeamScoreboard = GUI:FindFirstChild("Ally Team Scoreboard")
+local EnemyTeamScoreboard = GUI:FindFirstChild("Enemy Team Scoreboard")
+
+
+
+--AddTeamPoints Remote Event
+local AddTeamPoints = ReplicatedStorage:FindFirstChild("AddTeamPoints")
+--RemoveScoreBoard Event
+local RemoveScoreBoard = ReplicatedStorage:FindFirstChild("RemoveScoreBoard")
+--True if points can get updates (All AIs must be initially spawned before setting this to true)
+local CanUpdateScore = ReplicatedStorage:FindFirstChild("CanUpdateScore")
 --Song Handler Remote Event
-local SongHandler = game.ReplicatedStorage:FindFirstChild("Song Handler")
---Enemy Team's Name
-local EnemyTeamName, EnemyIcon = game.ReplicatedStorage:FindFirstChild("EnemyTeam"), game.ReplicatedStorage:FindFirstChild("EnemyIcon")
---VS Frame GUI
-local VSFrame = script.Parent:FindFirstChild("VS Frame")
+local SongHandler = ReplicatedStorage:FindFirstChild("Song Handler")
 
 --[[AddRoundXPToPlayer RMEOTE event
 Gets called when the battle ends and the player 
 will earn XP]]
-local AddRoundXPToPlayer = game.ReplicatedStorage:FindFirstChild("AddRoundXPToPlayer")
-
---[[RoundHasEnded REMOTE EVENT
-This remote event will have the server tell all clients about who won,
-and how many XP they earn playing the round.
-]]
-local RoundHasEnded = game.ReplicatedStorage:FindFirstChild("RoundHasEnded")
+local AddRoundXPToPlayer = ReplicatedStorage:FindFirstChild("AddRoundXPToPlayer")
 
 --Player's Messages
-local Message1 = script.Parent:FindFirstChild("Message 1")
-local Message2 = script.Parent:FindFirstChild("Message 2")
+local Message1 = GUI:FindFirstChild("Message 1")
+local Message2 = GUI:FindFirstChild("Message 2")
 --White Color
 local whiteColor = Color3.fromRGB(255, 255, 255)
 --Map Index (Used to have players spawn at the correct spawn location when joining the game)
-local MapIndex = game.ReplicatedStorage:FindFirstChild("Map")
+local MapIndex = ReplicatedStorage:FindFirstChild("Map")
 
 --Adds commas on every thousands
 function formatNumber(Points)
@@ -60,225 +60,160 @@ function formatNumber(Points)
 			formatted = string.sub(Points,i,i)..formatted
 		end
 	
-		rev_index_ptr = rev_index_ptr + 1
+		rev_index_ptr += 1
 	end
 
 	return formatted
 end
 
---[[
-Creates a scoreboard for the player
+--[[Makes the scoreboard visible or invisible to the player
 
-Gets called when:
-1. The match begins
-2. The player has joined the match
+	Parameter(s):
+	state => {true: display scoreboard, false: don't display the scoreboard}
 ]]
-CreateScoreBoard.OnClientEvent:Connect(function()
+function displayScoreboard(state)
+	AllyTeamScoreboard.Visible = state
+	EnemyTeamScoreboard.Visible = state
+end
+
+--[[Creates a scoreboard for the player
+
+	Parameter(s):
+	enemy team => name of the enemy team
+	enemy icon => icon of the enemy team
+]]
+ReplicatedStorage['Create Scoreboard'].OnClientEvent:Connect(function(enemyTeam, enemyIcon)
 		
 	--Assigns Enemy Scoreboard
-	EnemyTeamScoreboard.TeamName.Text = EnemyTeamName.Value
-	EnemyTeamScoreboard.TeamIcon.Image = EnemyIcon.Value
+	EnemyTeamScoreboard['Team Name'].Text = enemyTeam
+	EnemyTeamScoreboard['Team Icon'].Image = enemyIcon
 	
 	--Display score points
-	AllyTeamScoreboard.TeamScore.Text = tostring(formatNumber(AllyPoints.Value))
-	EnemyTeamScoreboard.TeamScore.Text = tostring(formatNumber(EnemyPoints.Value))
-		
-	--Scoreboards become visible to the player
-	AllyTeamScoreboard.Visible = true
-	EnemyTeamScoreboard.Visible = true
+	AllyTeamScoreboard['Team Score'].Text = formatNumber(AllyPoints.Value)
+	EnemyTeamScoreboard['Team Score'].Text = formatNumber(EnemyPoints.Value)
+	
+	--Displays the scoreboard
+	displayScoreboard(true)
 end)
 
---Removes player's scoreboard once the player gets teleported to the Break Room
-RemoveScoreBoard.OnClientEvent:Connect(function()
-	AllyTeamScoreboard.Visible = false
-	EnemyTeamScoreboard.Visible = false
-end)
+--Removes the Scoreboard from the player
+ReplicatedStorage['Remove Scoreboard'].OnClientEvent:Connect(displayScoreboard)
 
---[[ 
-The ADDTEAMPOINTS Remote Event:
-1. Add points to NH101 or Enemy Team
-2. Checks if either of the team scores reaches the victory score
-3. Lets the player know if they won or lost
-4. Gives player's round XP
-5. Tells the server to end the Round (Only one client can do that)
-]]
-AddTeamPoints.OnClientEvent:Connect(function(team)
+--Updates the team scores in the team scoreboards
+ReplicatedStorage['Update Team Points'].OnClientEvent:Connect(function()
 	if CanUpdateScore.Value then
-		
-		--Scores are updated everytime the AI dies
-		if team == "Ninja Heroes 101" then
-			AllyTeamScoreboard.TeamScore.Text = tostring(formatNumber(AllyPoints.Value))
-		else
-			EnemyTeamScoreboard.TeamScore.Text = tostring(formatNumber(EnemyPoints.Value))
-		end
+		AllyTeamScoreboard['Team Score'].Text = formatNumber(AllyPoints.Value)
+		EnemyTeamScoreboard['Team Score'].Text = formatNumber(EnemyPoints.Value)
 		--print("Current Team Scores: "..AllyPoints.Value.." to "..EnemyPoints.Value)
 	end
 end)
 
 
---RoundHasEnded Remote Event
-RoundHasEnded.OnClientEvent:Connect(function()
-			
-	--Gets leaderstats to check if player is under Level 20
-	local leaderstats = player:WaitForChild("leaderstats")
+--Displays results and gives round XP to players
+ReplicatedStorage['Round Has Ended'].OnClientEvent:Connect(function()
 	
-	--Sound Object
-	local Sound = game.Workspace:FindFirstChild("Results")
-	--List of Result Song
-	local ResultSongID = {
-		"http://www.roblox.com/asset/?id=146876684", --Won!
-		"http://www.roblox.com/asset/?id=1844173391", --Lost
-		"http://www.roblox.com/asset/?id=259060012" --Tied
-	}
+	--[[Writes a message about results and returns the amount
+		of XP given based on the player's level and results
 	
-	--[[ Message1 and Message2 changed color to red, blue, or gray ]]
-	--Blue Color (Ninja Heroes 101 Team)
-	local blueColor = Color3.fromRGB(77, 121, 255)
-	--Red Color (Enemy Team)
-	local redColor = Color3.fromRGB(255, 77, 77)
-	--White Color
-	local whiteColor = Color3.fromRGB(255, 255, 255)
-	
-	--Delivers results to the player
-	local function Results(color, resultMessage, statsMessage, soundID)
-		Message1.TextColor3 = color
-		Message2.TextColor3 = color
+		Parameter(s):
+		result message => tells the player who won, lost, or tied
+		give XP => amount of XP given to player after the match
+	]]
+	local function writeResultMessage(resultMessage, give_XP)
+		
+		--Sets results message
 		Message1.Text = resultMessage
-		Message2.Text = statsMessage
-		Sound.SoundId = soundID
-	end
-	
-	--Player's bonus cash and XP
-	local bonus_cash = 0
-	local bonus_xp = 0
-	
-	--Creates a message about bonus cash and bonus XP; Returns it
-	local function createMessageTwo()
 		
-		--MarketPlace
-		local MarketPlace = game:GetService("MarketplaceService")
-		
-		--[[Multiplier (1 => No VIP, 2 => VIP, 3 => MEGA VIP
-			Doesn't update bonus cash and xp values]]
-		local multiplier = 1
-		
-		if MarketPlace:UserOwnsGamePassAsync(player.UserId, 11420646) --[[MEGA VIP]] then
-			multiplier = 3
-		elseif MarketPlace:UserOwnsGamePassAsync(player.UserId, 11420620) --[[VIP]] then
-			multiplier = 2
-		end
-		
-		--Lets the player know that they earned bonus cash and XP
-		if bonus_xp ~= 0 then return "+"..tostring(bonus_xp * multiplier).."XP & +"..tostring(bonus_cash * multiplier).." Cash" end
-		
-		--Lets Level 20+ player know that they only earned bonus cash 
-		return "+"..tostring(bonus_cash * multiplier).." Cash"
-	end
-	
-	if player.Team.Name == "Ninja Heroes 101" or player.Team.Name == EnemyTeamName.Value then --For Fighters
-		if AllyPoints.Value > EnemyPoints.Value then --NH101 Team Won!
-			if player.Team.Name == "Ninja Heroes 101" then
-				bonus_cash = 50
-				if player.leaderstats.Level.Value < 20 then bonus_xp = 100 end
-				Results(blueColor, "Ninja Heroes 101 Won!", createMessageTwo(), ResultSongID[1])
-			else --Enemy Team Lost
-				bonus_cash = 15
-				if player.leaderstats.Level.Value < 20 then bonus_xp = 50 end
-				Results(redColor, EnemyTeamName.Value.." Lost", createMessageTwo(), ResultSongID[2])
-			end
-		elseif AllyPoints.Value < EnemyPoints.Value then --If the Enemy Team won!
-			if player.Team.Name == "Ninja Heroes 101" then 
-				bonus_cash = 15
-				if player.leaderstats.Level.Value < 20 then bonus_xp = 50 end
-				Results(blueColor, "Ninja Heroes 101 Lost", createMessageTwo(), ResultSongID[2])
-			else --NH101 Lost
-				bonus_cash = 50
-				if player.leaderstats.Level.Value < 20 then bonus_xp = 100 end
-				Results(redColor, EnemyTeamName.Value.." Won!", createMessageTwo(), ResultSongID[1])
-			end
-		else --Tied ._.
-			bonus_cash = 25
-			if player.leaderstats.Level.Value < 20 then bonus_xp = 75 end
-			Results(whiteColor, "Tied", createMessageTwo(), ResultSongID[3])
-		end
-	else --For Spectators
-		if AllyPoints.Value > EnemyPoints.Value then
-			Results(blueColor, "Ninja Heroes 101 Won!", "", ResultSongID[1])
-		elseif AllyPoints.Value < EnemyPoints.Value then
-			Results(redColor, EnemyTeamName.Value.." Won!", "", ResultSongID[1])
+		--[[Cannot give players XP because they have reached max level of this 
+		game mode or the player is on Spectators team]]
+		if player_level >= MaxLevel or player.Team.Name == 'Spectators' then
+			give_XP = 0
 		else
-			Results(whiteColor, "Tied", "", ResultSongID[3])
+			-- Multiplies given XP based on player's owned gamepass
+			if MarketPlace:UserOwnsGamePassAsync(player.UserId, 11420646) --[[MEGA VIP]] then
+				give_XP *= 2
+			elseif MarketPlace:UserOwnsGamePassAsync(player.UserId, 11420620) --[[VIP]] then
+				give_XP *= 3
+			end
+			
+			Message2.Text = '+'..tostring(give_XP)..'XP'
+		end
+		
+		return give_XP
+	end
+	
+	--[[Plays the winning, losing, or tied song based on the
+		match results
+	
+		Parameter(s):
+		song ID => asset ID of the results song
+	]]
+	local function playResultsSong(songID)
+		ResultsSong.SoundId = 'http://www.roblox.com/asset/?id='..songID
+		ResultsSong:Play()
+	end
+	
+	--[[Determines the player whether they win or lose based
+		on their team and the amount of points. This returns the amount
+		of XP given to player after the match.
+	
+		Parameter(s):
+		team name => name of the player's team
+		team points 1 => supporting team's points (object)
+		team points 2 => opposing team's points (object)
+	]]
+	local function determinePlayer(team_name, teamPoints1, teamPoints2)
+		
+		--Amount of XP to give to the player after the round ended
+		local give_XP
+		--List of XP amounts to give (1 => Win, 2 => Loss, 3 => Draw)
+		local XPs = {150,50,75}
+		
+		if teamPoints1.Value > teamPoints2.Value then
+			give_XP = writeResultMessage(team_name..' Won!', XPs[1])
+			playResultsSong(ResultsSong['Won'].Value)
+		elseif teamPoints1.Value < teamPoints2.Value then
+			give_XP = writeResultMessage(team_name..' Lost', XPs[2])
+			playResultsSong(ResultsSong['Lost'].Value)
+		else
+			give_XP = writeResultMessage('Game Tied', XPs[3])
+			playResultsSong(ResultsSong['Tied'].Value)
+		end
+		
+		return give_XP
+	end
+	
+	--Amount of XP to give to player after the round has ended
+	local roundXP
+	
+	--Determines the XP to be given to player based on team and results
+	if player.Team then
+		
+		--Gets player's team name
+		local team_name = player.Team.Name
+		
+		if team_name == "Ninja Heroes 101" or team_name ~= 'Spectators' then --For Fighters
+			if team_name == "Ninja Heroes 101" then
+				roundXP = determinePlayer(team_name, AllyPoints, EnemyPoints)
+			else
+				roundXP = determinePlayer(team_name, EnemyPoints, AllyPoints)
+			end
+		else--For Spectators
+			if AllyPoints.Value > EnemyPoints.Value then
+				roundXP = writeResultMessage('Ninja Heroes 101 Won!', 0)
+			elseif AllyPoints.Value < EnemyPoints.Value then
+				roundXP = writeResultMessage(EnemyTeamScoreboard['Team Name'].Text..' Won!', 0)
+			else
+				roundXP = writeResultMessage('Game Tied', 0)
+			end
 		end
 	end
 	
-	--Plays the winning, losing, or tied song
-	Sound:Play()
-	
-	--[[Displays the message of player's victory, loss, or tie.
-	Tells player how much bonus cash and xp they earned.]]
-	Message1.Visible = true
-	Message2.Visible = true
-	
-	--Tells server to give players bonus cash and xp
-	game.ReplicatedStorage:FindFirstChild("Send Player Bonus Stats"):FireServer(leaderstats, bonus_cash, bonus_xp)
+	--Tells server to give players round XP
+	ReplicatedStorage:FindFirstChild("Add Round XP To Player"):FireServer(roundXP)
 	
 	wait(8)
-	
-	--Makes Victory and XP invisible to the player
-	Message1.Visible = false
-	Message2.Visible = false
-end)
-
---Tells the player that the match is about to begin and performs countdown
-SendMessageToAllPlayers.OnClientEvent:Connect(function(key)
-	
-	if key == 0 then --Displays VS Frame
-		
-		--Enemy Frame from VS Frame
-		local EnemyFrame = VSFrame:FindFirstChild("Enemy Frame")
-		local TeamImage = EnemyFrame:FindFirstChild("Team Image")
-		local TeamName = EnemyFrame:FindFirstChild("Team Name")
-		
-		--Assigns team name and image
-		TeamImage.Image = EnemyIcon.Value
-		TeamName.Text = EnemyTeamName.Value
-		
-		--Assigns map name
-		local MapName = VSFrame:FindFirstChild("Map Name")
-		MapName.Text = "Map: "..MapIndex.Value
-		
-		--Makes frame visible and then invisible
-		VSFrame.Visible = true
-		wait(8)
-		VSFrame.Visible = false
-		
-	elseif key == 1 then --Displays "The Match is about to Begin" message
-		Message1.TextColor3 = Color3.fromRGB(255, 255, 255) --message turns back to white
-		Message1.Text = "The Match is about to Begin"
-		Message1.Visible = true
-		wait(4)
-	else --Performs countdown
-		Message1.Visible = true
-		Message1.Text = "3"
-		wait(1)
-		Message1.Text = "2"
-		wait(1)
-		Message1.Text = "1"
-		wait(1)
-		--Sets the message color to orange
-		Message1.TextColor3 = Color3.fromRGB(255, 204, 0)
-		Message1.Text = "Fight!"
-		wait(2)
-	end
-	
-	Message1.Visible = false
-end)
-
---Plays the battle song
-SongHandler.OnClientEvent:Connect(function(playlist, instruction)
-	if instruction == "Play" then
-		playlist:Play()
-	else
-		playlist:Stop()
-	end
+	--Removes both messages
+	Message1.Text = ''
+	Message2.Text = ''
 end)
