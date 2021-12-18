@@ -17,7 +17,7 @@ local EnemyPoints = TeamPoints:FindFirstChild('Enemy Points')
 --Score to Win
 local VictoryScore = ServerStorage:FindFirstChild("Victory Score").Value
 --Total Number of NPCs in the map
-local AI_Count = 0
+local NPC_Count = 0
 
 --Runs the battle until either of the teams reached victory points
 Gameplay:FindFirstChild('Run the Battle').OnInvoke = function()
@@ -308,6 +308,8 @@ Gameplay:FindFirstChild('Spawn NPCs').OnInvoke = function(team, enemyTeam, map)
 				for i = 1, NPC['Total Spawn'].Value do
 					teleporter(NPC:Clone(), map, true) --spawns NPC
 					wait(1)
+					NPC_Count += 1
+					print(NPC_Count..' NPCs has spawned in the map')
 				end
 			end
 		end
@@ -338,6 +340,8 @@ Gameplay:FindFirstChild('Spawn NPCs').OnInvoke = function(team, enemyTeam, map)
 				for j = 1, NPC['Total Spawn'].Value do
 					teleporter(NPC:Clone(), map, true)
 					wait(1)
+					NPC_Count += 1
+					print(NPC_Count..' NPCs has spawned in the map')
 				end				
 				i += 1
 			end
@@ -369,6 +373,8 @@ Gameplay:FindFirstChild('Spawn NPCs').OnInvoke = function(team, enemyTeam, map)
 			for i = 1, NPC['Total Spawn'].Value do
 				wait(1)
 				teleporter(NPC:Clone(), map, true)
+				NPC_Count += 1
+				print(NPC_Count..' NPCs has spawned in the map')
 			end
 		end
 	end
@@ -399,10 +405,10 @@ Gameplay:FindFirstChild('Despawn All NPCs').OnInvoke = function()
 		for _, obj in pairs(workspace:GetChildren()) do
 			if obj:IsA("Model") then
 				--Total Spawn property only exists in NPCs (not player characters)
-				if obj:FindFirstChildOfClass("Humanoid") and obj:FindFirstChild('Total Spawn') then
+				if obj:FindFirstChild('Total Spawn') then
 					obj:Remove()
 					--print(obj.Name..'has despawned')
-					AI_Count -= 1
+					NPC_Count -= 1
 					--print("There are "..AI_Count.." NPCs left.")
 				end
 			end
@@ -410,9 +416,9 @@ Gameplay:FindFirstChild('Despawn All NPCs').OnInvoke = function()
 	end
 
 	--All AIs need to despawn 
-	while AI_Count ~= 0 do
+	while NPC_Count ~= 0 do
 		run()
-		print(AI_Count.." AIs has despawned in the map")
+		print(NPC_Count.." NPCs has despawned in the map")
 		wait(1) --Prevents the game from crashing!
 	end
 end
@@ -436,8 +442,7 @@ Gameplay:FindFirstChild('Add Chase Scripts to All NPCs').OnInvoke = function()
 	for _, NPC in pairs(workspace:GetChildren()) do
 		--We will use the model's total spawn property to detect an NPC
 		if NPC:IsA("Model") and NPC:FindFirstChild('Total Spawn') then	
-			local humanoid = NPC:FindFirstChildOfClass("Humanoid")
-			if humanoid then addChaseScriptToNPC(NPC) end
+			addChaseScriptToNPC(NPC) 
 		end
 	end
 
@@ -457,7 +462,7 @@ end
 
 
 --Resets team scores to 0
-Gameplay:FindFirstChild('Remove All Teams').OnInvoke = function()
+Gameplay:FindFirstChild('Reset Team Scores').OnInvoke = function()
 	AllyPoints.Value = 0
 	EnemyPoints.Value = 0
 end
